@@ -1,5 +1,7 @@
 # Created using ChatGPT 
 # Drives an RC car with a Stadia Bluetooth enabled controller
+# Make sure you have the evdev library installed (pip install evdev) and the RPi.GPIO library (pip install RPi.GPIO)
+#    adjust the GPIO pin number and trigger threshold according to your setup
 
 import time 
 import evdev
