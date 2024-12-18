@@ -1,9 +1,9 @@
 # Code useful for home robots
-Motor controls and some sensor integration on the Arduino Nano. 
- * Rationale: they have large example sets, are pretty forgiving hardware, cheap, and already are on hand.
-Higher level and more complex logic will be handled through Python on the Raspberry Pi 4.
-  * Rationale: adequate guides and similar examples, relatively cheap, and are already on hand.
-This code will be used with differential drive robots, that will share the same root code with special configurations being addressed as the time comes.
+* Motor controls and some sensor integration on the Arduino Nano.
+* * Rationale: they have large example sets, are pretty forgiving hardware, cheap, and already are on hand.
+* Higher level and more complex logic will be handled through Python on the Raspberry Pi 4.
+* * Rationale: adequate guides and similar examples, relatively cheap, and are already on hand.
+* This code will be used with differential drive robots, that will share the same root code with special configurations being addressed as the time comes.
 
 ## To Do:
  * Pi safe shutdown button
