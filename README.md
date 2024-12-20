@@ -6,7 +6,7 @@
 * This code will be used with differential drive robots, that will share the same root code and much of its functionality, with special configurations being addressed as the time comes.
 
 ## To Do:
- * Pi safe shutdown button https://www.youtube.com/watch?v=fyHYSLbhLgU
+ * Pi safe shutdown button [https://www.youtube.com/watch?v=fyHYSLbhLgU](https://scribles.net/adding-power-switch-on-raspberry-pi/)
  * Setup Github on Pi's
  * Serial exchange from Pi to Arduino with heartbeats and watchdog  https://roboticsbackend.com/raspberry-pi-arduino-serial-communication/
  * Pi Status/Mode indicator LED
