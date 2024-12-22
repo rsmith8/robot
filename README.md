@@ -10,6 +10,7 @@
  * Setup Github on Pi's https://sites.google.com/site/cartwrightraspberrypiprojects/home/ramblings/tutorials/using-github
  * Serial exchange from Pi to Arduino with heartbeats and watchdog  https://roboticsbackend.com/raspberry-pi-arduino-serial-communication/
  * Pi Status/Mode indicator LED
+https://learn.adafruit.com/adafruit-neopixel-uberguide/arduino-library-use?gad_source=1&gclid=CjwKCAiA65m7BhAwEiwAAgu4JD9FtCgHHnpN_hr-w3SNC3MJHgO5yg_ghjP4fyLUVrk08GC1Uknm7RoCm38QAvD_BwE
  * Camera functionality https://www.raspberrypi.com/documentation/computers/camera_software.html#rpicam-apps
  * Establish Modes through controller buttons
     1. Stop
