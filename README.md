@@ -7,7 +7,7 @@
 
 ## To Do:
  * Pi safe shutdown button https://scribles.net/adding-power-switch-on-raspberry-pi/
- * Setup Github on Pi's
+ * Setup Github on Pi's https://sites.google.com/site/cartwrightraspberrypiprojects/home/ramblings/tutorials/using-github
  * Serial exchange from Pi to Arduino with heartbeats and watchdog  https://roboticsbackend.com/raspberry-pi-arduino-serial-communication/
  * Pi Status/Mode indicator LED
  * Camera functionality https://www.raspberrypi.com/documentation/computers/camera_software.html#rpicam-apps
