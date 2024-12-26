@@ -17,6 +17,7 @@ https://learn.adafruit.com/adafruit-neopixel-uberguide/arduino-library-use?gad_s
     2. Stadia controlled
     3. OpenCV tracking or Open Bot
  * PicoVoice control of modes
+CAN motor control https://forums.raspberrypi.com/viewtopic.php?t=296117
 
 ## References: 
    * https://www.raspberrypi.com/documentation/computers/
