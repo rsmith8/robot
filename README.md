@@ -18,7 +18,7 @@ https://learn.adafruit.com/adafruit-neopixel-uberguide/arduino-library-use?gad_s
     3. OpenCV tracking or Open Bot
  * PicoVoice control of modes
 CAN motor control https://forums.raspberrypi.com/viewtopic.php?t=296117
-ROS integration
+ * ROS integration https://docs.ros.org/en/foxy/How-To-Guides/Installing-on-Raspberry-Pi.html
 
 ## References: 
    * https://www.raspberrypi.com/documentation/computers/
