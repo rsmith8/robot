@@ -1,4 +1,6 @@
-#sudo nano /usr/local/bin/power-switch.py
+#Sourced from https://scribles.net/adding-power-switch-on-raspberry-pi/
+# Edit file in:
+#  sudo nano /usr/local/bin/power-switch.py
 
 import threading, subprocess
 import RPi.GPIO as GPIO
