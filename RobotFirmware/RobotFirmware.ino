@@ -1,19 +1,20 @@
 /*Source OpenBot Firmware based on App Version: 0.6.1
- include <Adafruit_NeoPixel.h>  
+--Hardware-------------------------------------
+  PIN 2 Neopixel
+  PIN A4 ToF SDA I2C bus at 115200 baud
+  PIN A5 ToF SCL I2C bus at 115200 baud
+  PIN A0 PWM Throttle
+  PIN A1 PWM Steer
+  PIN A7 Voltage divider
+  PIN 11 Sonar TRIGGER
+  PIN 12 Sonar ECHO
+  PIN 7 LED left indicator
+  PIN 8 LED right indicator
+------------------------------------------------*/
+
+ include <Adafruit_NeoPixel.h>
  include <Wire.h>
- byte deviceAddress = 0x10;  // The address of the TF-Luna device is 0x10
- 
- define PIN 2      // input pin Neopixel is attached to  
- define NUMPIXELS   5 // number of neopixels in strip  
- Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);  
- */
 
-
-
-// App Version: 0.6.1
-// ---------------------------------------------------------------------------
-// This Arduino Nano sketch accompanies the OpenBot Android application.
-//
 // The sketch has the following functinonalities:
 //  - receive control commands and sensor config from Android application (USB serial)
 //  - produce low-level controls (PWM) for the vehicle
@@ -29,16 +30,6 @@
 //  - Interrupts: PinChangeInterrupt by Nico Hood (read speed sensors and sonar)
 //  - OLED: Adafruit_SSD1306 & Adafruit_GFX (display vehicle status)
 //  - Servo: Built-In library by Michael Margolis (required for RC truck)
-// Contributors:
-//  - October 2020: OLED display support by Ingmar Stapel
-//  - December 2021: RC truck support by Usman Fiaz
-//  - March 2022: OpenBot-Lite support by William Tan
-//  - May 2022: MTV support by Quentin Leboutet
-// ---------------------------------------------------------------------------
-
-// By Matthias Mueller, Embodied AI Lab, 2022
-// ---------------------------------------------------------------------------
-
 //------------------------------------------------------//
 // DEFINITIONS - DO NOT CHANGE!
 //------------------------------------------------------//
@@ -50,13 +41,8 @@
 #define LITE 5    // Smaller DIY version for education
 #define RTR_520 6 // Ready-to-Run with 520-motors --> select ESP32 Dev Module as board!
 #define MTV 7     // Multi Terrain Vehicle --> select ESP32 Dev Module as board!
-
-//------------------------------------------------------//
-// SETUP - Choose your body
-//------------------------------------------------------//
-
 // Setup the OpenBot version (DIY,PCB_V1,PCB_V2, RTR_TT, RC_CAR, LITE, RTR_520)
-#define OPENBOT RC_CAR
+#define OPENBOT RC_CAR //Choose your body
 
 //------------------------------------------------------//
 // SETTINGS - Global settings
@@ -108,132 +94,7 @@ boolean coast_mode = 1;
 // PIN_LED_LF, PIN_LED_RF               Control left and right front LEDs (illumination)
 // PIN_LED_Y, PIN_LED_G, PIN_LED_B      Control yellow, green and blue status LEDs
 
-//-------------------------DIY--------------------------//
-#if (OPENBOT == DIY)
-const String robot_type = "DIY";
-#define HAS_VOLTAGE_DIVIDER 0
-const float VOLTAGE_DIVIDER_FACTOR = (20 + 10) / 10;
-const float VOLTAGE_MIN = 2.5f;
-const float VOLTAGE_LOW = 9.0f;
-const float VOLTAGE_MAX = 12.6f;
-const float ADC_FACTOR = 5.0 / 1023;
-#define HAS_INDICATORS 0
-#define HAS_SONAR 0
-#define SONAR_MEDIAN 0
-#define HAS_SPEED_SENSORS_FRONT 0
-#define HAS_OLED 0
-const int PIN_PWM_L1 = 5;
-const int PIN_PWM_L2 = 6;
-const int PIN_PWM_R1 = 9;
-const int PIN_PWM_R2 = 10;
-const int PIN_SPEED_LF = 2;
-const int PIN_SPEED_RF = 3;
-const int PIN_VIN = A7;
-const int PIN_TRIGGER = 12;
-const int PIN_ECHO = 11;
-const int PIN_LED_LI = 4;
-const int PIN_LED_RI = 7;
-//-------------------------PCB_V1-----------------------//
-#elif (OPENBOT == PCB_V1)
-const String robot_type = "PCB_V1";
-#define HAS_VOLTAGE_DIVIDER 1
-const float VOLTAGE_DIVIDER_FACTOR = (100 + 33) / 33;
-const float VOLTAGE_MIN = 2.5f;
-const float VOLTAGE_LOW = 9.0f;
-const float VOLTAGE_MAX = 12.6f;
-const float ADC_FACTOR = 5.0 / 1023;
-#define HAS_INDICATORS 1
-#define HAS_SONAR 1
-#define SONAR_MEDIAN 0
-#define HAS_SPEED_SENSORS_FRONT 1
-#define HAS_OLED 0
-const int PIN_PWM_L1 = 9;
-const int PIN_PWM_L2 = 10;
-const int PIN_PWM_R1 = 5;
-const int PIN_PWM_R2 = 6;
-const int PIN_SPEED_LF = 2;
-const int PIN_SPEED_RF = 4;
-const int PIN_VIN = A7;
-const int PIN_TRIGGER = 3;
-const int PIN_ECHO = 3;
-const int PIN_LED_LI = 7;
-const int PIN_LED_RI = 8;
-//-------------------------PCB_V2-----------------------//
-#elif (OPENBOT == PCB_V2)
-const String robot_type = "PCB_V2";
-#define HAS_VOLTAGE_DIVIDER 1
-const float VOLTAGE_DIVIDER_FACTOR = (20 + 10) / 10;
-const float VOLTAGE_MIN = 2.5f;
-const float VOLTAGE_LOW = 9.0f;
-const float VOLTAGE_MAX = 12.6f;
-const float ADC_FACTOR = 5.0 / 1023;
-#define HAS_INDICATORS 1
-#define HAS_SONAR 1
-#define SONAR_MEDIAN 0
-#define HAS_SPEED_SENSORS_FRONT 1
-#define HAS_OLED 0
-const int PIN_PWM_L1 = 9;
-const int PIN_PWM_L2 = 10;
-const int PIN_PWM_R1 = 5;
-const int PIN_PWM_R2 = 6;
-const int PIN_SPEED_LF = 2;
-const int PIN_SPEED_RF = 3;
-const int PIN_VIN = A7;
-const int PIN_TRIGGER = 4;
-const int PIN_ECHO = 4;
-const int PIN_LED_LI = 7;
-const int PIN_LED_RI = 8;
-//-------------------------RTR_TT-----------------------//
-#elif (OPENBOT == RTR_TT)
-const String robot_type = "RTR_TT";
-#define HAS_VOLTAGE_DIVIDER 1
-const float VOLTAGE_DIVIDER_FACTOR = (30 + 10) / 10;
-const float VOLTAGE_MIN = 2.5f;
-const float VOLTAGE_LOW = 9.0f;
-const float VOLTAGE_MAX = 12.6f;
-const float ADC_FACTOR = 5.0 / 1023;
-#define HAS_INDICATORS 1
-#define HAS_SONAR 1
-#define SONAR_MEDIAN 0
-#define HAS_BUMPER 1
-#define HAS_SPEED_SENSORS_FRONT 1
-#define HAS_SPEED_SENSORS_BACK 1
-#define HAS_LEDS_FRONT 1
-#define HAS_LEDS_BACK 1
-#define HAS_LEDS_STATUS 1
-const int PIN_PWM_L1 = 10;
-const int PIN_PWM_L2 = 9;
-const int PIN_PWM_R1 = 6;
-const int PIN_PWM_R2 = 5;
-const int PIN_SPEED_LF = A3;
-const int PIN_SPEED_RF = 7;
-const int PIN_SPEED_LB = A4;
-const int PIN_SPEED_RB = 8;
-const int PIN_VIN = A6;
-const int PIN_TRIGGER = 4;
-const int PIN_ECHO = 2;
-const int PIN_LED_LI = A5;
-const int PIN_LED_RI = 12;
-const int PIN_LED_LB = A5;
-const int PIN_LED_RB = 12;
-const int PIN_LED_LF = 3;
-const int PIN_LED_RF = 11;
-const int PIN_LED_Y = 13;
-const int PIN_LED_G = A0;
-const int PIN_LED_B = A1;
-const int PIN_BUMPER = A2;
-const int BUMPER_NOISE = 512;
-const int BUMPER_EPS = 10;
-const int BUMPER_AF = 951;
-const int BUMPER_BF = 903;
-const int BUMPER_CF = 867;
-const int BUMPER_LF = 825;
-const int BUMPER_RF = 786;
-const int BUMPER_BB = 745;
-const int BUMPER_LB = 607;
-const int BUMPER_RB = 561;
 //-------------------------RC_CAR-----------------------//
-#elif (OPENBOT == RC_CAR)
 #include <Servo.h>
 Servo ESC;
 Servo SERVO;
@@ -254,119 +115,6 @@ const int PIN_TRIGGER = 11;
 const int PIN_ECHO = 12;
 const int PIN_LED_LI = 7;
 const int PIN_LED_RI = 8;
-//-------------------------LITE-------------------------//
-#elif (OPENBOT == LITE)
-const String robot_type = "LITE";
-const float VOLTAGE_MIN = 2.5f;
-const float VOLTAGE_LOW = 4.5f;
-const float VOLTAGE_MAX = 5.0f;
-#define HAS_INDICATORS 1
-const int PIN_PWM_L1 = 5;
-const int PIN_PWM_L2 = 6;
-const int PIN_PWM_R1 = 9;
-const int PIN_PWM_R2 = 10;
-const int PIN_LED_LI = 4;
-const int PIN_LED_RI = 7;
-//-------------------------RTR_520----------------------//
-#elif (OPENBOT == RTR_520)
-#include <esp_wifi.h>
-#define analogWrite ledcWrite
-#define attachPinChangeInterrupt attachInterrupt
-#define detachPinChangeInterrupt detachInterrupt
-#define digitalPinToPinChangeInterrupt digitalPinToInterrupt
-#define PIN_PWM_L1 CH_PWM_L1
-#define PIN_PWM_L2 CH_PWM_L2
-#define PIN_PWM_R1 CH_PWM_R1
-#define PIN_PWM_R2 CH_PWM_R2
-const String robot_type = "RTR_520";
-#define HAS_VOLTAGE_DIVIDER 1
-const float VOLTAGE_DIVIDER_FACTOR = (30 + 10) / 10;
-const float VOLTAGE_MIN = 6.0f;
-const float VOLTAGE_LOW = 9.0f;
-const float VOLTAGE_MAX = 12.6f;
-const float ADC_FACTOR = 3.3 / 4095;
-#define HAS_INDICATORS 1
-#define HAS_SONAR 1
-#define SONAR_MEDIAN 0
-#define HAS_BUMPER 1
-#define HAS_SPEED_SENSORS_FRONT 1
-#define HAS_SPEED_SENSORS_BACK 1
-#define HAS_LEDS_FRONT 1
-#define HAS_LEDS_BACK 1
-#define HAS_LEDS_STATUS 1
-//PWM properties
-const int FREQ = 5000;
-const int RES = 8;
-const int CH_PWM_L1 = 0;
-const int CH_PWM_L2 = 1;
-const int CH_PWM_R1 = 2;
-const int CH_PWM_R2 = 3;
-const int CH_LED_LF = 4;
-const int CH_LED_RF = 5;
-const int CH_LED_LB = 6;
-const int CH_LED_RB = 7;
-const int PIN_PWM_LF1 = 16;
-const int PIN_PWM_LF2 = 17;
-const int PIN_PWM_LB1 = 19;
-const int PIN_PWM_LB2 = 18;
-const int PIN_PWM_RF1 = 26;
-const int PIN_PWM_RF2 = 25;
-const int PIN_PWM_RB1 = 33;
-const int PIN_PWM_RB2 = 32;
-const int PIN_SPEED_LF = 21;
-const int PIN_SPEED_RF = 35;
-const int PIN_SPEED_LB = 23;
-const int PIN_SPEED_RB = 36;
-const int PIN_VIN = 39;
-const int PIN_TRIGGER = 12;
-const int PIN_ECHO = 14;
-const int PIN_LED_LI = 22;
-const int PIN_LED_RI = 27;
-const int PIN_LED_LB = 22;
-const int PIN_LED_RB = 27;
-const int PIN_LED_LF = 4;
-const int PIN_LED_RF = 13;
-const int PIN_LED_Y = 0;
-const int PIN_LED_G = 2;
-const int PIN_LED_B = 15;
-const int PIN_BUMPER = 34;
-const int BUMPER_NOISE = 512;
-const int BUMPER_EPS = 50;
-const int BUMPER_AF = 3890;
-const int BUMPER_BF = 3550;
-const int BUMPER_CF = 3330;
-const int BUMPER_LF = 3100;
-const int BUMPER_RF = 2930;
-const int BUMPER_BB = 2750;
-const int BUMPER_LB = 2180;
-const int BUMPER_RB = 2000;
-//---------------------------MTV------------------------//
-#elif (OPENBOT == MTV)
-#include <esp_wifi.h>
-#define analogWrite ledcWrite
-#define attachPinChangeInterrupt attachInterrupt
-#define detachPinChangeInterrupt detachInterrupt
-#define digitalPinToPinChangeInterrupt digitalPinToInterrupt
-const String robot_type = "MTV";
-#define HAS_VOLTAGE_DIVIDER 0
-const float VOLTAGE_MIN = 17.0f;
-const float VOLTAGE_LOW = 20.0f;
-const float VOLTAGE_MAX = 24.0f;
-#define HAS_SPEED_SENSORS_FRONT 1
-#define HAS_SPEED_SENSORS_BACK 1
-#define HAS_SPEED_SENSORS_MIDDLE 1
-#define HAS_INDICATORS 0
-#define HAS_SONAR 0
-#define SONAR_MEDIAN 0
-#define HAS_BUMPER 0
-#define HAS_LEDS_FRONT 0
-#define HAS_LEDS_BACK 0
-#define HAS_LEDS_STATUS 0
-const int PIN_PWM_R = 19;
-const int PIN_DIR_R = 18;
-const int PIN_PWM_L = 33;
-const int PIN_DIR_L = 32;
-
 // Encoder setup:
 const int PIN_SPEED_LF = 17; // PIN_SPEED_LF_A = 17, PIN_SPEED_LF_B = 5
 const int PIN_SPEED_RF = 14; // PIN_SPEED_RF_A = 14, PIN_SPEED_RF_B = 13
@@ -374,14 +122,11 @@ const int PIN_SPEED_LM = 4;  // PIN_SPEED_LM_A = 4, PIN_SPEED_LM_B = 16
 const int PIN_SPEED_RM = 26; // PIN_SPEED_RM_A = 26, PIN_SPEED_RM_B = 27
 const int PIN_SPEED_LB = 15; // PIN_SPEED_LB_A = 15, PIN_SPEED_LB_B = 2
 const int PIN_SPEED_RB = 35; // PIN_SPEED_RB_A = 35, PIN_SPEED_RB_B = 25
-
 // PWM properties:
 const int FREQ = 5000;
 const int RES = 8;
 const int LHS_PWM_OUT = 0;
 const int RHS_PWM_OUT = 1;
-#endif
-//------------------------------------------------------//
 
 //------------------------------------------------------//
 // INITIALIZATION
