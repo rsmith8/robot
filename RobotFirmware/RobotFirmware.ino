@@ -1,15 +1,33 @@
 /*Source OpenBot Firmware based on App Version: 0.6.1
---Hardware-------------------------------------
-  PIN 2 Neopixel
-  PIN A4 ToF SDA I2C bus at 115200 baud
-  PIN A5 ToF SCL I2C bus at 115200 baud
-  PIN A0 PWM Throttle
-  PIN A1 PWM Steer
-  PIN A7 Voltage divider
-  PIN 11 Sonar TRIGGER
-  PIN 12 Sonar ECHO
-  PIN 7 LED left indicator
-  PIN 8 LED right indicator
+--Arduino Pin Layout-------------------------------------
+ Top Left
+  --
+  Pin 4 GND                             (Wired)
+  PIN D6 ?Sonar?
+  PIN D8 ?Sonar?
+  PIN D9 ?Sonar?
+  PIN D10 ?Sonar?
+  PIN D11 Sonar TRIGGER                 (Wired but Verify?)
+  PIN D12 Sonar ECHO                    (Wired but Verify?)
+  --
+ USB
+  --
+  PIN D16 ?Neo?
+  PIN A0 PWM Throttle                   (wired)
+  PIN A1 PWM Steer                      (wired)
+  PIN A4 ToF SDA I2C bus at 115200 baud (wired)
+  PIN A5 ToF SCL I2C bus at 115200 baud (wired)
+  PIN 29 GND                            (Wired)
+  PIN 30 +5V (this is Vin 7-12V move to 27? for +5) (wired)
+  --
+ Top Right
+
+ Missing and in code:
+  PIN 2 Neopixel                        empty
+  PIN 7 LED left indicator              ?Something on pin
+  PIN 8 LED right indicatorn            ?Something on pin
+  PIN A7 Voltage divider                empty
+
 ------------------------------------------------*/
 
  include <Adafruit_NeoPixel.h>
@@ -115,23 +133,11 @@ const int PIN_TRIGGER = 11;
 const int PIN_ECHO = 12;
 const int PIN_LED_LI = 7;
 const int PIN_LED_RI = 8;
-// Encoder setup:
-const int PIN_SPEED_LF = 17; // PIN_SPEED_LF_A = 17, PIN_SPEED_LF_B = 5
-const int PIN_SPEED_RF = 14; // PIN_SPEED_RF_A = 14, PIN_SPEED_RF_B = 13
-const int PIN_SPEED_LM = 4;  // PIN_SPEED_LM_A = 4, PIN_SPEED_LM_B = 16
-const int PIN_SPEED_RM = 26; // PIN_SPEED_RM_A = 26, PIN_SPEED_RM_B = 27
-const int PIN_SPEED_LB = 15; // PIN_SPEED_LB_A = 15, PIN_SPEED_LB_B = 2
-const int PIN_SPEED_RB = 35; // PIN_SPEED_RB_A = 35, PIN_SPEED_RB_B = 25
-// PWM properties:
-const int FREQ = 5000;
-const int RES = 8;
-const int LHS_PWM_OUT = 0;
-const int RHS_PWM_OUT = 1;
 
 //------------------------------------------------------//
 // INITIALIZATION
 //------------------------------------------------------//
-#if (NO_PHONE_MODE)
+#if (NO_PHONE_MODE)  //yardbot set to 0
 unsigned long turn_direction_time = 0;
 unsigned long turn_direction_interval = 5000;
 unsigned int turn_direction = 0;
@@ -140,11 +146,7 @@ int ctrl_slow = 96;
 int ctrl_min = (int) 255.0 * VOLTAGE_MIN / VOLTAGE_MAX;
 #endif
 
-#if HAS_SONAR
-#if ((OPENBOT != RTR_520) and (OPENBOT != MTV))
-#include "PinChangeInterrupt.h"
-#endif
-// Sonar sensor
+#if HAS_SONAR  //yardbot set to 1
 const float US_TO_CM = 0.01715;              //cm/uS -> (343 * 100 / 1000000) / 2;
 const unsigned int MAX_SONAR_DISTANCE = 300;  //cm
 const unsigned long MAX_SONAR_TIME = (long) MAX_SONAR_DISTANCE * 2 * 10 / 343 + 1;
@@ -201,21 +203,6 @@ unsigned long voltage_time = 0;
 #endif
 
 #if (HAS_SPEED_SENSORS_FRONT or HAS_SPEED_SENSORS_BACK or HAS_SPEED_SENSORS_MIDDLE)
-#if (OPENBOT == RTR_520)
-// Speed sensor
-// 530rpm motor - reduction ratio 19, ticks per motor rotation 11
-// One revolution = 209 ticks
-const unsigned int TICKS_PER_REV = 209;
-#elif (OPENBOT == MTV)
-// Speed sensor
-// 178rpm motor - reduction ratio 56, ticks per motor rotation 11
-// One revolution = 616 ticks
-const unsigned int TICKS_PER_REV = 616;
-#else
-#include "PinChangeInterrupt.h"
-const unsigned int TICKS_PER_REV = 20;
-#endif
-// Speed sensor
 const unsigned long SPEED_TRIGGER_THRESHOLD = 1; // Triggers within this time will be ignored (ms)
 
 volatile int counter_lf = 0;
@@ -273,21 +260,12 @@ unsigned long display_time = 0;
 //------------------------------------------------------//
 void setup()
 {
-#if (OPENBOT == LITE)
-  coast_mode = !coast_mode;
-#endif
-  // Outputs
 #if (OPENBOT == RC_CAR)
   pinMode(PIN_PWM_T, OUTPUT);
   pinMode(PIN_PWM_S, OUTPUT);
   // Attach the ESC and SERVO
   ESC.attach(PIN_PWM_T, 1000, 2000);   // (pin, min pulse width, max pulse width in microseconds)
   SERVO.attach(PIN_PWM_S, 1000, 2000); // (pin, min pulse width, max pulse width in microseconds)
-#elif ((OPENBOT != RTR_520) and (OPENBOT != MTV))
-  pinMode(PIN_PWM_L1, OUTPUT);
-  pinMode(PIN_PWM_L2, OUTPUT);
-  pinMode(PIN_PWM_R1, OUTPUT);
-  pinMode(PIN_PWM_R2, OUTPUT);
 #endif
   // Initialize with the I2C addr 0x3C
 #if HAS_OLED
@@ -352,59 +330,7 @@ void setup()
   attachPinChangeInterrupt(digitalPinToPinChangeInterrupt(PIN_SPEED_RM), update_speed_rm, RISING);
 #endif
 
-#if (OPENBOT == RTR_520)
-  esp_wifi_deinit();
 
-  // PWMs
-  // Configure PWM functionalitites
-  ledcSetup(CH_PWM_L1, FREQ, RES);
-  ledcSetup(CH_PWM_L2, FREQ, RES);
-  ledcSetup(CH_PWM_R1, FREQ, RES);
-  ledcSetup(CH_PWM_R2, FREQ, RES);
-
-  // Attach the channel to the GPIO to be controlled
-  ledcAttachPin(PIN_PWM_LF1, CH_PWM_L1);
-  ledcAttachPin(PIN_PWM_LB1, CH_PWM_L1);
-  ledcAttachPin(PIN_PWM_LF2, CH_PWM_L2);
-  ledcAttachPin(PIN_PWM_LB2, CH_PWM_L2);
-  ledcAttachPin(PIN_PWM_RF1, CH_PWM_R1);
-  ledcAttachPin(PIN_PWM_RB1, CH_PWM_R1);
-  ledcAttachPin(PIN_PWM_RF2, CH_PWM_R2);
-  ledcAttachPin(PIN_PWM_RB2, CH_PWM_R2);
-
-#if (HAS_LEDS_BACK)
-  ledcSetup(CH_LED_LB, FREQ, RES);
-  ledcSetup(CH_LED_RB, FREQ, RES);
-  ledcAttachPin(PIN_LED_RB, CH_LED_RB);
-  ledcAttachPin(PIN_LED_LB, CH_LED_LB);
-#endif
-
-#if (HAS_LEDS_FRONT)
-  ledcSetup(CH_LED_LF, FREQ, RES);
-  ledcSetup(CH_LED_RF, FREQ, RES);
-  ledcAttachPin(PIN_LED_LF, CH_LED_LF);
-  ledcAttachPin(PIN_LED_RF, CH_LED_RF);
-#endif
-
-#endif
-
-#if (OPENBOT == MTV)
-  esp_wifi_deinit();
-
-  // PWMs
-  // PWM signal configuration using the ESP32 API
-  ledcSetup(LHS_PWM_OUT, FREQ, RES);
-  ledcSetup(RHS_PWM_OUT, FREQ, RES);
-  
-  // Attach the channel to the GPIO to be controlled
-  ledcAttachPin(PIN_PWM_L, LHS_PWM_OUT);
-  ledcAttachPin(PIN_PWM_R, RHS_PWM_OUT);
-  
-  pinMode(PIN_DIR_L, OUTPUT);
-  pinMode(PIN_DIR_R, OUTPUT);
-  pinMode(PIN_DIR_L, LOW);
-  pinMode(PIN_DIR_R, LOW);
-#endif
 
   Serial.begin(115200, SERIAL_8N1);
   // SERIAL_8E1 - 8 data bits, even parity, 1 stop bit
@@ -605,9 +531,6 @@ void update_vehicle()
 #if (OPENBOT == RC_CAR)
   update_throttle();
   update_steering();
-#elif (OPENBOT == MTV)
-  update_left_motors_mtv();
-  update_right_motors_mtv();
 #else
   update_left_motors();
   update_right_motors();
@@ -642,141 +565,6 @@ void update_steering()
   {
   //  SERVO.write(180 - steering);
   }
-}
-
-#elif (OPENBOT == MTV)
-void update_left_motors_mtv()
-{
-  if (ctrl_left < 0)
-  {
-    ledcWrite(LHS_PWM_OUT, -ctrl_left);
-    digitalWrite(PIN_DIR_L, HIGH);
-  }
-  else if (ctrl_left > 0)
-  {
-    ledcWrite(LHS_PWM_OUT, ctrl_left);
-    digitalWrite(PIN_DIR_L, LOW);
-  }
-  else
-  {
-    if (coast_mode)
-      coast_left_motors_mtv();
-    else
-      stop_left_motors_mtv();
-  }
-}
-
-void stop_left_motors_mtv()
-{
-  ledcWrite(LHS_PWM_OUT, 0);
-  digitalWrite(PIN_DIR_L, LOW);
-}
-
-void coast_left_motors_mtv()
-{
-  ledcWrite(LHS_PWM_OUT, 0);
-  digitalWrite(PIN_DIR_L, LOW);
-}
-
-void update_right_motors_mtv()
-{
-  if (ctrl_right < 0)
-  {
-    ledcWrite(RHS_PWM_OUT, -ctrl_right);
-    digitalWrite(PIN_DIR_R, HIGH);
-  }
-  else if (ctrl_right > 0)
-  {
-    ledcWrite(RHS_PWM_OUT, ctrl_right);
-    digitalWrite(PIN_DIR_R, LOW);
-  }
-  else
-  {
-    if (coast_mode)
-      coast_right_motors_mtv();
-    else
-      stop_right_motors_mtv();
-  }
-}
-
-void stop_right_motors_mtv()
-{
-  ledcWrite(RHS_PWM_OUT, 0);
-  digitalWrite(PIN_DIR_R, LOW);
-}
-
-void coast_right_motors_mtv()
-{
-  ledcWrite(RHS_PWM_OUT, 0);
-  digitalWrite(PIN_DIR_R, LOW);
-}
-
-#else
-
-void update_left_motors()
-{
-  if (ctrl_left < 0)
-  {
-    analogWrite(PIN_PWM_L1, -ctrl_left);
-    analogWrite(PIN_PWM_L2, 0);
-  }
-  else if (ctrl_left > 0)
-  {
-    analogWrite(PIN_PWM_L1, 0);
-    analogWrite(PIN_PWM_L2, ctrl_left);
-  }
-  else
-  {
-    if (coast_mode)
-      coast_left_motors();
-    else
-      stop_left_motors();
-  }
-}
-
-void stop_left_motors()
-{
-  analogWrite(PIN_PWM_L1, 255);
-  analogWrite(PIN_PWM_L2, 255);
-}
-
-void coast_left_motors()
-{
-  analogWrite(PIN_PWM_L1, 0);
-  analogWrite(PIN_PWM_L2, 0);
-}
-
-void update_right_motors()
-{
-  if (ctrl_right < 0)
-  {
-    analogWrite(PIN_PWM_R1, -ctrl_right);
-    analogWrite(PIN_PWM_R2, 0);
-  }
-  else if (ctrl_right > 0)
-  {
-    analogWrite(PIN_PWM_R1, 0);
-    analogWrite(PIN_PWM_R2, ctrl_right);
-  }
-  else
-  {
-    if (coast_mode)
-      coast_right_motors();
-    else
-      stop_right_motors();
-  }
-}
-
-void stop_right_motors()
-{
-  analogWrite(PIN_PWM_R1, 255);
-  analogWrite(PIN_PWM_R2, 255);
-}
-
-void coast_right_motors()
-{
-  analogWrite(PIN_PWM_R1, 0);
-  analogWrite(PIN_PWM_R2, 0);
 }
 #endif
 
@@ -1266,9 +1054,6 @@ void update_indicator()
 {
   if (indicator_left > 0)
   {
-#if (OPENBOT == RTR_520 && PIN_LED_LI == PIN_LED_LB)
-    ledcDetachPin(PIN_LED_LB);
-#endif
     digitalWrite(PIN_LED_LI, !digitalRead(PIN_LED_LI));
   }
   else
@@ -1278,15 +1063,9 @@ void update_indicator()
 #else
     digitalWrite(PIN_LED_LI, LOW);
 #endif
-#if (OPENBOT == RTR_520 && PIN_LED_LI == PIN_LED_LB)
-    ledcAttachPin(PIN_LED_LB, CH_LED_LB);
-#endif
   }
   if (indicator_right > 0)
   {
-#if (OPENBOT == RTR_520 && PIN_LED_RI == PIN_LED_RB)
-    ledcDetachPin(PIN_LED_RB);
-#endif
     digitalWrite(PIN_LED_RI, !digitalRead(PIN_LED_RI));
   }
   else
@@ -1296,9 +1075,6 @@ void update_indicator()
 #else
     digitalWrite(PIN_LED_RI, LOW);
 #endif
-#if (OPENBOT == RTR_520 && PIN_LED_RI == PIN_LED_RB)
-    ledcAttachPin(PIN_LED_RB, CH_LED_RB);
-#endif
   }
 }
 #endif
@@ -1307,23 +1083,13 @@ void update_indicator()
 void update_light()
 {
 #if (HAS_LEDS_FRONT)
-#if (OPENBOT == RTR_520)
-  analogWrite(CH_LED_LF, light_front);
-  analogWrite(CH_LED_RF, light_front);
-#else
   analogWrite(PIN_LED_LF, light_front);
   analogWrite(PIN_LED_RF, light_front);
 #endif
-#endif
 
 #if (HAS_LEDS_BACK)
-#if (OPENBOT == RTR_520)
-  analogWrite(CH_LED_LB, light_back);
-  analogWrite(CH_LED_RB, light_back);
-#else
   analogWrite(PIN_LED_LB, light_back);
   analogWrite(PIN_LED_RB, light_back);
-#endif
 #endif
 }
 #endif
