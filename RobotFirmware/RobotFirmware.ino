@@ -30,9 +30,6 @@
 
 ------------------------------------------------*/
 
- include <Adafruit_NeoPixel.h>
- include <Wire.h>
-
 // The sketch has the following functinonalities:
 //  - receive control commands and sensor config from Android application (USB serial)
 //  - produce low-level controls (PWM) for the vehicle
@@ -43,7 +40,7 @@
 //  - control LEDs for status and at front and back of vehicle
 //  - send sensor readings to Android application (USB serial)
 //  - display vehicle status on OLED
-//
+// - Removed Bumper and No Phone mode Functionalities from original code, simplifying with no expected use for them.
 // Dependencies: Install via "Tools --> Manage Libraries" (type library name in the search field)
 //  - Interrupts: PinChangeInterrupt by Nico Hood (read speed sensors and sonar)
 //  - OLED: Adafruit_SSD1306 & Adafruit_GFX (display vehicle status)
@@ -55,24 +52,14 @@
 #define PCB_V1 1  // DIY with PCB V1
 #define PCB_V2 2  // DIY with PCB V2
 #define RTR_TT 3  // Ready-to-Run with TT-motors
-#define RC_CAR 4  // RC truck prototypes
-#define LITE 5    // Smaller DIY version for education
-#define RTR_520 6 // Ready-to-Run with 520-motors --> select ESP32 Dev Module as board!
-#define MTV 7     // Multi Terrain Vehicle --> select ESP32 Dev Module as board!
+#define RC_CAR 4  // modified to tank drive
+// Removed 520 and MTV vehicles from original code
 // Setup the OpenBot version (DIY,PCB_V1,PCB_V2, RTR_TT, RC_CAR, LITE, RTR_520)
 #define OPENBOT RC_CAR //Choose your body
 
 //------------------------------------------------------//
 // SETTINGS - Global settings
 //------------------------------------------------------//
-
-// Enable/Disable no phone mode (1,0)
-// In no phone mode:
-// - the motors will turn at 75% speed
-// - the speed will be reduced if an obstacle is detected by the sonar sensor
-// - the car will turn, if an obstacle is detected within TURN_DISTANCE
-// WARNING: If the sonar sensor is not setup, the car will go full speed forward!
-#define NO_PHONE_MODE 0
 
 // Enable/Disable debug print (1,0)
 #define DEBUG 0
@@ -89,7 +76,6 @@ boolean coast_mode = 1;
 // HAS_INDICATORS                       Enable/Disable indicators (1,0)
 // HAS_SONAR                            Enable/Disable sonar (1,0)
 // SONAR_MEDIAN                         Enable/Disable median filter for sonar measurements (1,0)
-// HAS_BUMPER                           Enable/Disable bumper (1,0)
 // HAS_SPEED_SENSORS_FRONT              Enable/Disable front speed sensors (1,0)
 // HAS_SPEED_SENSORS_BACK               Enable/Disable back speed sensors (1,0)
 // HAS_SPEED_SENSORS_MIDDLE             Enable/Disable middle speed sensors (1,0)
@@ -113,7 +99,9 @@ boolean coast_mode = 1;
 // PIN_LED_Y, PIN_LED_G, PIN_LED_B      Control yellow, green and blue status LEDs
 
 //-------------------------RC_CAR-----------------------//
-#include <Servo.h>
+#include <Servo.h> 
+#include <Adafruit_NeoPixel.h>
+#include <Wire.h>
 Servo ESC;
 Servo SERVO;
 const String robot_type = "RC_CAR";
@@ -133,30 +121,35 @@ const int PIN_TRIGGER = 11;
 const int PIN_ECHO = 12;
 const int PIN_LED_LI = 7;
 const int PIN_LED_RI = 8;
+// Encoder setup:
+const int PIN_SPEED_LF = 17; // PIN_SPEED_LF_A = 17, PIN_SPEED_LF_B = 5
+const int PIN_SPEED_RF = 14; // PIN_SPEED_RF_A = 14, PIN_SPEED_RF_B = 13
+const int PIN_SPEED_LM = 4;  // PIN_SPEED_LM_A = 4, PIN_SPEED_LM_B = 16
+const int PIN_SPEED_RM = 26; // PIN_SPEED_RM_A = 26, PIN_SPEED_RM_B = 27
+const int PIN_SPEED_LB = 15; // PIN_SPEED_LB_A = 15, PIN_SPEED_LB_B = 2
+const int PIN_SPEED_RB = 35; // PIN_SPEED_RB_A = 35, PIN_SPEED_RB_B = 25
+// PWM properties:
+const int FREQ = 5000;
+const int RES = 8;
+const int LHS_PWM_OUT = 0;
+const int RHS_PWM_OUT = 1;
 
 //------------------------------------------------------//
 // INITIALIZATION
 //------------------------------------------------------//
-#if (NO_PHONE_MODE)  //yardbot set to 0
-unsigned long turn_direction_time = 0;
-unsigned long turn_direction_interval = 5000;
-unsigned int turn_direction = 0;
-int ctrl_max = 192;
-int ctrl_slow = 96;
-int ctrl_min = (int) 255.0 * VOLTAGE_MIN / VOLTAGE_MAX;
-#endif
 
-#if HAS_SONAR  //yardbot set to 1
+#if HAS_SONAR
+#if ((OPENBOT != RTR_520) and (OPENBOT != MTV))
+#include "PinChangeInterrupt.h"
+#endif
+// Sonar sensor
 const float US_TO_CM = 0.01715;              //cm/uS -> (343 * 100 / 1000000) / 2;
 const unsigned int MAX_SONAR_DISTANCE = 300;  //cm
 const unsigned long MAX_SONAR_TIME = (long) MAX_SONAR_DISTANCE * 2 * 10 / 343 + 1;
 const unsigned int STOP_DISTANCE = 30;     //cm
-#if (NO_PHONE_MODE)
-const unsigned int TURN_DISTANCE = 50;
-unsigned long sonar_interval = 100;
-#else
+
 unsigned long sonar_interval = 1000;
-#endif
+
 unsigned long sonar_time = 0;
 boolean sonar_sent = false;
 boolean ping_success = false;
@@ -203,6 +196,21 @@ unsigned long voltage_time = 0;
 #endif
 
 #if (HAS_SPEED_SENSORS_FRONT or HAS_SPEED_SENSORS_BACK or HAS_SPEED_SENSORS_MIDDLE)
+#if (OPENBOT == RTR_520)
+// Speed sensor
+// 530rpm motor - reduction ratio 19, ticks per motor rotation 11
+// One revolution = 209 ticks
+const unsigned int TICKS_PER_REV = 209;
+#elif (OPENBOT == MTV)
+// Speed sensor
+// 178rpm motor - reduction ratio 56, ticks per motor rotation 11
+// One revolution = 616 ticks
+const unsigned int TICKS_PER_REV = 616;
+#else
+#include "PinChangeInterrupt.h"
+const unsigned int TICKS_PER_REV = 20;
+#endif
+// Speed sensor
 const unsigned long SPEED_TRIGGER_THRESHOLD = 1; // Triggers within this time will be ignored (ms)
 
 volatile int counter_lf = 0;
@@ -230,20 +238,6 @@ unsigned int light_front = 0;
 unsigned int light_back = 0;
 #endif
 
-// Bumper
-#if HAS_BUMPER
-bool bumper_event = 0;
-bool collision_lf = 0;
-bool collision_rf = 0;
-bool collision_cf = 0;
-bool collision_lb = 0;
-bool collision_rb = 0;
-unsigned long bumper_interval = 750;
-unsigned long bumper_time = 0;
-const int bumper_array_sz = 5;
-int bumper_array[bumper_array_sz] = {0};
-int bumper_reading = 0;
-#endif
 
 //Heartbeat
 unsigned long heartbeat_interval = -1;
@@ -260,12 +254,21 @@ unsigned long display_time = 0;
 //------------------------------------------------------//
 void setup()
 {
+#if (OPENBOT == LITE)
+  coast_mode = !coast_mode;
+#endif
+  // Outputs
 #if (OPENBOT == RC_CAR)
   pinMode(PIN_PWM_T, OUTPUT);
   pinMode(PIN_PWM_S, OUTPUT);
   // Attach the ESC and SERVO
   ESC.attach(PIN_PWM_T, 1000, 2000);   // (pin, min pulse width, max pulse width in microseconds)
   SERVO.attach(PIN_PWM_S, 1000, 2000); // (pin, min pulse width, max pulse width in microseconds)
+#elif ((OPENBOT != RTR_520) and (OPENBOT != MTV))
+  pinMode(PIN_PWM_L1, OUTPUT);
+  pinMode(PIN_PWM_L2, OUTPUT);
+  pinMode(PIN_PWM_R1, OUTPUT);
+  pinMode(PIN_PWM_R2, OUTPUT);
 #endif
   // Initialize with the I2C addr 0x3C
 #if HAS_OLED
@@ -307,9 +310,6 @@ void setup()
 #if (HAS_VOLTAGE_DIVIDER)
   pinMode(PIN_VIN, INPUT);
 #endif
-#if (HAS_BUMPER)
-  pinMode(PIN_BUMPER, INPUT);
-#endif
 
 #if (HAS_SPEED_SENSORS_BACK)
   pinMode(PIN_SPEED_LB, INPUT_PULLUP);
@@ -330,7 +330,59 @@ void setup()
   attachPinChangeInterrupt(digitalPinToPinChangeInterrupt(PIN_SPEED_RM), update_speed_rm, RISING);
 #endif
 
+#if (OPENBOT == RTR_520)
+  esp_wifi_deinit();
 
+  // PWMs
+  // Configure PWM functionalitites
+  ledcSetup(CH_PWM_L1, FREQ, RES);
+  ledcSetup(CH_PWM_L2, FREQ, RES);
+  ledcSetup(CH_PWM_R1, FREQ, RES);
+  ledcSetup(CH_PWM_R2, FREQ, RES);
+
+  // Attach the channel to the GPIO to be controlled
+  ledcAttachPin(PIN_PWM_LF1, CH_PWM_L1);
+  ledcAttachPin(PIN_PWM_LB1, CH_PWM_L1);
+  ledcAttachPin(PIN_PWM_LF2, CH_PWM_L2);
+  ledcAttachPin(PIN_PWM_LB2, CH_PWM_L2);
+  ledcAttachPin(PIN_PWM_RF1, CH_PWM_R1);
+  ledcAttachPin(PIN_PWM_RB1, CH_PWM_R1);
+  ledcAttachPin(PIN_PWM_RF2, CH_PWM_R2);
+  ledcAttachPin(PIN_PWM_RB2, CH_PWM_R2);
+
+#if (HAS_LEDS_BACK)
+  ledcSetup(CH_LED_LB, FREQ, RES);
+  ledcSetup(CH_LED_RB, FREQ, RES);
+  ledcAttachPin(PIN_LED_RB, CH_LED_RB);
+  ledcAttachPin(PIN_LED_LB, CH_LED_LB);
+#endif
+
+#if (HAS_LEDS_FRONT)
+  ledcSetup(CH_LED_LF, FREQ, RES);
+  ledcSetup(CH_LED_RF, FREQ, RES);
+  ledcAttachPin(PIN_LED_LF, CH_LED_LF);
+  ledcAttachPin(PIN_LED_RF, CH_LED_RF);
+#endif
+
+#endif
+
+#if (OPENBOT == MTV)
+  esp_wifi_deinit();
+
+  // PWMs
+  // PWM signal configuration using the ESP32 API
+  ledcSetup(LHS_PWM_OUT, FREQ, RES);
+  ledcSetup(RHS_PWM_OUT, FREQ, RES);
+  
+  // Attach the channel to the GPIO to be controlled
+  ledcAttachPin(PIN_PWM_L, LHS_PWM_OUT);
+  ledcAttachPin(PIN_PWM_R, RHS_PWM_OUT);
+  
+  pinMode(PIN_DIR_L, OUTPUT);
+  pinMode(PIN_DIR_R, OUTPUT);
+  pinMode(PIN_DIR_L, LOW);
+  pinMode(PIN_DIR_R, LOW);
+#endif
 
   Serial.begin(115200, SERIAL_8N1);
   // SERIAL_8E1 - 8 data bits, even parity, 1 stop bit
@@ -345,55 +397,7 @@ void setup()
 //------------------------------------------------------//
 void loop()
 {
-#if (NO_PHONE_MODE)
-  if ((millis() - turn_direction_time) >= turn_direction_interval)
-  {
-    turn_direction_time = millis();
-    turn_direction = random(2); //Generate random number in the range [0,1]
-  }
-  // Drive forward
-  if (distance_estimate > 3 * TURN_DISTANCE) {
-    ctrl_left = distance_estimate;
-    ctrl_right = ctrl_left;
-    digitalWrite(PIN_LED_LI, LOW);
-    digitalWrite(PIN_LED_RI, LOW);
-  }
-  // Turn slightly
-  else if (distance_estimate > 2 * TURN_DISTANCE) {
-    ctrl_left = distance_estimate;
-    ctrl_right = ctrl_left / 2;
-  }
-  // Turn strongly
-  else if (distance_estimate > TURN_DISTANCE) {
-    ctrl_left = ctrl_max;
-    ctrl_right = - ctrl_max;
-  }
-  // Drive backward slowly
-  else {
-    ctrl_left = -ctrl_slow;
-    ctrl_right = -ctrl_slow;
-    digitalWrite(PIN_LED_LI, HIGH);
-    digitalWrite(PIN_LED_RI, HIGH);
-  }
-  // Flip controls if needed and set indicator light
-  if (ctrl_left != ctrl_right) {
-    if (turn_direction > 0) {
-      int temp = ctrl_left;
-      ctrl_left = ctrl_right;
-      ctrl_right = temp;
-      digitalWrite(PIN_LED_LI, HIGH);
-      digitalWrite(PIN_LED_RI, LOW);
-    }
-    else {
-      digitalWrite(PIN_LED_LI, LOW);
-      digitalWrite(PIN_LED_RI, HIGH);
-    }
-  }
 
-  // Enforce limits
-  ctrl_left = ctrl_left > 0 ? max(ctrl_min, min(ctrl_left, ctrl_max)) : min(-ctrl_min, max(ctrl_left, -ctrl_max));
-  ctrl_right = ctrl_right > 0 ? max(ctrl_min, min(ctrl_right, ctrl_max)) : min(-ctrl_min, max(ctrl_right, -ctrl_max));
-#else // Check for messages from the phone
   if (Serial.available() > 0)
   {
     on_serial_rx();
@@ -408,33 +412,7 @@ void loop()
     ctrl_left = 0;
     ctrl_right = 0;
   }
-#endif
-
-#if HAS_BUMPER
-  if (analogRead(PIN_BUMPER) > BUMPER_NOISE && !bumper_event)
-  {
-    delayMicroseconds(500);
-    for (unsigned int i = 0; i < bumper_array_sz; i++)
-    {
-      bumper_array[i] = analogRead(PIN_BUMPER);
-    }
-    bumper_reading = get_median(bumper_array, bumper_array_sz);
-    if (bumper_reading > BUMPER_NOISE)
-      emergency_stop();
-  }
-
-  bool collison_front = collision_lf || collision_rf || collision_cf;
-  bool collision_back = collision_lb || collision_rb;
-  bool control_front = ctrl_left > 0 && ctrl_right > 0;
-  bool control_back = ctrl_left < 0 && ctrl_right < 0;
-
-  if (!bumper_event || (control_back && collison_front) || (control_front && collision_back))
-  {
-    update_vehicle();
-  }
-#else
   update_vehicle();
-#endif
 
 #if HAS_VOLTAGE_DIVIDER
   // Measure voltage
@@ -476,14 +454,6 @@ void loop()
   }
 #endif
 
-#if HAS_BUMPER
-  // Check bumper signal every bumper_interval
-  if ((millis() - bumper_time) >= bumper_interval && bumper_event)
-  {
-    reset_bumper();
-    bumper_time = millis();
-  }
-#endif
 #if HAS_VOLTAGE_DIVIDER
   // Send voltage reading via serial
   if ((millis() - voltage_time) >= voltage_interval)
@@ -531,6 +501,9 @@ void update_vehicle()
 #if (OPENBOT == RC_CAR)
   update_throttle();
   update_steering();
+#elif (OPENBOT == MTV)
+  update_left_motors_mtv();
+  update_right_motors_mtv();
 #else
   update_left_motors();
   update_right_motors();
@@ -566,129 +539,148 @@ void update_steering()
   //  SERVO.write(180 - steering);
   }
 }
+
+#elif (OPENBOT == MTV)
+void update_left_motors_mtv()
+{
+  if (ctrl_left < 0)
+  {
+    ledcWrite(LHS_PWM_OUT, -ctrl_left);
+    digitalWrite(PIN_DIR_L, HIGH);
+  }
+  else if (ctrl_left > 0)
+  {
+    ledcWrite(LHS_PWM_OUT, ctrl_left);
+    digitalWrite(PIN_DIR_L, LOW);
+  }
+  else
+  {
+    if (coast_mode)
+      coast_left_motors_mtv();
+    else
+      stop_left_motors_mtv();
+  }
+}
+
+void stop_left_motors_mtv()
+{
+  ledcWrite(LHS_PWM_OUT, 0);
+  digitalWrite(PIN_DIR_L, LOW);
+}
+
+void coast_left_motors_mtv()
+{
+  ledcWrite(LHS_PWM_OUT, 0);
+  digitalWrite(PIN_DIR_L, LOW);
+}
+
+void update_right_motors_mtv()
+{
+  if (ctrl_right < 0)
+  {
+    ledcWrite(RHS_PWM_OUT, -ctrl_right);
+    digitalWrite(PIN_DIR_R, HIGH);
+  }
+  else if (ctrl_right > 0)
+  {
+    ledcWrite(RHS_PWM_OUT, ctrl_right);
+    digitalWrite(PIN_DIR_R, LOW);
+  }
+  else
+  {
+    if (coast_mode)
+      coast_right_motors_mtv();
+    else
+      stop_right_motors_mtv();
+  }
+}
+
+void stop_right_motors_mtv()
+{
+  ledcWrite(RHS_PWM_OUT, 0);
+  digitalWrite(PIN_DIR_R, LOW);
+}
+
+void coast_right_motors_mtv()
+{
+  ledcWrite(RHS_PWM_OUT, 0);
+  digitalWrite(PIN_DIR_R, LOW);
+}
+
+#else
+
+void update_left_motors()
+{
+  if (ctrl_left < 0)
+  {
+    analogWrite(PIN_PWM_L1, -ctrl_left);
+    analogWrite(PIN_PWM_L2, 0);
+  }
+  else if (ctrl_left > 0)
+  {
+    analogWrite(PIN_PWM_L1, 0);
+    analogWrite(PIN_PWM_L2, ctrl_left);
+  }
+  else
+  {
+    if (coast_mode)
+      coast_left_motors();
+    else
+      stop_left_motors();
+  }
+}
+
+void stop_left_motors()
+{
+  analogWrite(PIN_PWM_L1, 255);
+  analogWrite(PIN_PWM_L2, 255);
+}
+
+void coast_left_motors()
+{
+  analogWrite(PIN_PWM_L1, 0);
+  analogWrite(PIN_PWM_L2, 0);
+}
+
+void update_right_motors()
+{
+  if (ctrl_right < 0)
+  {
+    analogWrite(PIN_PWM_R1, -ctrl_right);
+    analogWrite(PIN_PWM_R2, 0);
+  }
+  else if (ctrl_right > 0)
+  {
+    analogWrite(PIN_PWM_R1, 0);
+    analogWrite(PIN_PWM_R2, ctrl_right);
+  }
+  else
+  {
+    if (coast_mode)
+      coast_right_motors();
+    else
+      stop_right_motors();
+  }
+}
+
+void stop_right_motors()
+{
+  analogWrite(PIN_PWM_R1, 255);
+  analogWrite(PIN_PWM_R2, 255);
+}
+
+void coast_right_motors()
+{
+  analogWrite(PIN_PWM_R1, 0);
+  analogWrite(PIN_PWM_R2, 0);
+}
 #endif
 
 boolean almost_equal(int a, int b, int eps) {
   return abs(a - b) <= eps;
 }
 
-#if HAS_BUMPER
-void emergency_stop()
-{
-  bumper_event = true;
-  stop_left_motors();
-  stop_right_motors();
-  ctrl_left = 0;
-  ctrl_right = 0;
-#if HAS_INDICATORS
-  indicator_left = 1;
-  indicator_right = 1;
-  indicator_time = millis() - indicator_interval; // update indicators
-#endif
-  bumper_time = millis();
-  char bumper_id[2];
-  if (almost_equal(bumper_reading, BUMPER_AF, BUMPER_EPS))
-  {
-    collision_cf = 1;
-    collision_lf = 1;
-    collision_rf = 1;
-    strncpy(bumper_id, "af", sizeof(bumper_id));
-#if DEBUG
-    Serial.print("All Front: ");
-#endif
-  }
-  else if (almost_equal(bumper_reading, BUMPER_BF, BUMPER_EPS))
-  {
-    collision_lf = 1;
-    collision_rf = 1;
-    strncpy(bumper_id, "bf", sizeof(bumper_id));
-#if DEBUG
-    Serial.print("Both Front: ");
-#endif
-  }
-  else if (almost_equal(bumper_reading, BUMPER_CF, BUMPER_EPS))
-  {
-    collision_cf = 1;
-    strncpy(bumper_id, "cf", sizeof(bumper_id));
-#if DEBUG
-    Serial.print("Camera Front: ");
-#endif
-  }
-  else if (almost_equal(bumper_reading, BUMPER_LF, BUMPER_EPS))
-  {
-    collision_lf = 1;
-    strncpy(bumper_id, "lf", sizeof(bumper_id));
-#if DEBUG
-    Serial.print("Left Front: ");
-#endif
-  }
-  else if (almost_equal(bumper_reading, BUMPER_RF, BUMPER_EPS))
-  {
-    collision_rf = 1;
-    strncpy(bumper_id, "rf", sizeof(bumper_id));
-#if DEBUG
-    Serial.print("Right Front: ");
-#endif
-  }
-  else if (almost_equal(bumper_reading, BUMPER_BB, BUMPER_EPS))
-  {
-    collision_lb = 1;
-    collision_rb = 1;
-    strncpy(bumper_id, "bb", sizeof(bumper_id));
-#if DEBUG
-    Serial.print("Both Back: ");
-#endif
-  }
-  else if (almost_equal(bumper_reading, BUMPER_LB, BUMPER_EPS))
-  {
-    collision_lb = 1;
-    strncpy(bumper_id, "lb", sizeof(bumper_id));
-#if DEBUG
-    Serial.print("Left Back: ");
-#endif
-  }
-  else if (almost_equal(bumper_reading, BUMPER_RB, BUMPER_EPS))
-  {
-    collision_rb = 1;
-    strncpy(bumper_id, "rb", sizeof(bumper_id));
-#if DEBUG
-    Serial.print("Right Back: ");
-#endif
-  }
-  else
-  {
-    strncpy(bumper_id, "??", sizeof(bumper_id));
-#if DEBUG
-    Serial.print("Unknown: ");
-#endif
-  }
-#if DEBUG
-  Serial.println(bumper_reading);
-#endif
-  send_bumper_reading(bumper_id);
-}
 
-void reset_bumper()
-{
-#if HAS_INDICATORS
-  indicator_left = 0;
-  indicator_right = 0;
-#endif
-  collision_lf = 0;
-  collision_rf = 0;
-  collision_cf = 0;
-  collision_lb = 0;
-  collision_rb = 0;
-  bumper_reading = 0;
-  bumper_event = false;
-}
-
-void send_bumper_reading(char bumper_id[])
-{
-  Serial.print("b");
-  Serial.println(bumper_id);
-}
-#endif
 
 enum msgParts
 {
@@ -790,12 +782,6 @@ void process_notification_msg()
 }
 #endif
 
-#if HAS_BUMPER
-void process_bumper_msg()
-{
-  bumper_interval = atol(msg_buf); // convert to long
-}
-#endif
 #if HAS_SONAR
 void process_sonar_msg()
 {
@@ -831,9 +817,6 @@ void process_feature_msg()
 #endif
 #if HAS_SONAR
   msg += "s:";
-#endif
-#if HAS_BUMPER
-  msg += "b:";
 #endif
 #if HAS_SPEED_SENSORS_FRONT
   msg += "wf:";
@@ -895,11 +878,7 @@ void parse_msg()
 {
   switch (header)
   {
-#if HAS_BUMPER
-    case 'b':
-      process_bumper_msg();
-      break;
-#endif
+
     case 'c':
       process_ctrl_msg();
       break;
@@ -1054,6 +1033,9 @@ void update_indicator()
 {
   if (indicator_left > 0)
   {
+#if (OPENBOT == RTR_520 && PIN_LED_LI == PIN_LED_LB)
+    ledcDetachPin(PIN_LED_LB);
+#endif
     digitalWrite(PIN_LED_LI, !digitalRead(PIN_LED_LI));
   }
   else
@@ -1063,9 +1045,15 @@ void update_indicator()
 #else
     digitalWrite(PIN_LED_LI, LOW);
 #endif
+#if (OPENBOT == RTR_520 && PIN_LED_LI == PIN_LED_LB)
+    ledcAttachPin(PIN_LED_LB, CH_LED_LB);
+#endif
   }
   if (indicator_right > 0)
   {
+#if (OPENBOT == RTR_520 && PIN_LED_RI == PIN_LED_RB)
+    ledcDetachPin(PIN_LED_RB);
+#endif
     digitalWrite(PIN_LED_RI, !digitalRead(PIN_LED_RI));
   }
   else
@@ -1075,6 +1063,9 @@ void update_indicator()
 #else
     digitalWrite(PIN_LED_RI, LOW);
 #endif
+#if (OPENBOT == RTR_520 && PIN_LED_RI == PIN_LED_RB)
+    ledcAttachPin(PIN_LED_RB, CH_LED_RB);
+#endif
   }
 }
 #endif
@@ -1083,13 +1074,23 @@ void update_indicator()
 void update_light()
 {
 #if (HAS_LEDS_FRONT)
+#if (OPENBOT == RTR_520)
+  analogWrite(CH_LED_LF, light_front);
+  analogWrite(CH_LED_RF, light_front);
+#else
   analogWrite(PIN_LED_LF, light_front);
   analogWrite(PIN_LED_RF, light_front);
 #endif
+#endif
 
 #if (HAS_LEDS_BACK)
+#if (OPENBOT == RTR_520)
+  analogWrite(CH_LED_LB, light_back);
+  analogWrite(CH_LED_RB, light_back);
+#else
   analogWrite(PIN_LED_LB, light_back);
   analogWrite(PIN_LED_RB, light_back);
+#endif
 #endif
 }
 #endif
