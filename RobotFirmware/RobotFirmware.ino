@@ -3,16 +3,16 @@
  Top Left
   --
   Pin 4 GND                             (Wired)
-  PIN D6 ?Sonar?
-  PIN D8 ?Sonar?
-  PIN D9 ?Sonar?
+  PIN D6 Sonar REAR ECHO                (Wired)
+  PIN D8 Sonar  FL ECHO                 (Wired)
+  PIN D9 Sonar  FL TRIG                 (Wired)
   PIN D10 Neo                           (Wired) 1)RF-Bumper 2)LF-Bumper 3)Top (G,R,B)
-  PIN D11 Sonar TRIGGER                 (Wired but Verify?)
-  PIN D12 Sonar ECHO                    (Wired but Verify?)
+  PIN D11 Sonar FR ECHO                 (Wired)
+  PIN D12 Sonar FR TRIG                 (Wired)
   --
  USB
   --
-  PIN D16 ?Sonar?
+  PIN D13 Sonar REAR TRIG               (Wired)
   PIN A0 PWM Throttle                   (wired)
   PIN A1 PWM Steer                      (wired)
   PIN A4 ToF SDA I2C bus at 115200 baud (wired)
