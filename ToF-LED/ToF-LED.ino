@@ -1,9 +1,9 @@
- // Techatronic.com  
+ // TFsense from Techatronic.com  
  #include <Adafruit_NeoPixel.h>  
  #include <Wire.h>
  byte deviceAddress = 0x10;  // The address of the TF-Luna device is 0x10
- #define PIN 10      // input pin Neopixel is attached to  
- #define NUMPIXELS   3 // number of neopixels in strip  
+ #define PIN 10              //Neopixel is attached to  
+ #define NUMPIXELS   3       // number of neopixels in strip  
  Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);  
  int delayval = 100; // timing delay in milliseconds  
 
