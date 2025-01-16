@@ -27,6 +27,7 @@
   PIN 7 LED left indicator              ?Something on pin
   PIN 8 LED right indicatorn            ?Something on pin
   PIN A7 Voltage divider                empty
+  PWM Pins 3, 5, 6, 9, 10, 11
 
 ------------------------------------------------*/
 
