@@ -21,6 +21,7 @@ CAN motor control https://forums.raspberrypi.com/viewtopic.php?t=296117
  * ROS integration https://docs.ros.org/en/foxy/How-To-Guides/Installing-on-Raspberry-Pi.html
 
 ## References: 
+   * https://www.printables.com/model/106225-modular-snap-together-raspberry-pi-2b3b3b4-case-w-
    * https://www.raspberrypi.com/documentation/computers/
    * Pin out and Pi references https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#gpio
    * https://docs.arduino.cc/learn/electronics/servo-motors/
