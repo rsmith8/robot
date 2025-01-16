@@ -6,8 +6,6 @@
 * This code will be used with differential drive robots, that will share the same root code and much of its functionality, with special configurations being addressed as the time comes.
 
 ## To Do:
- * Pi safe shutdown button https://scribles.net/adding-power-switch-on-raspberry-pi/
- * Setup Github on Pi's https://sites.google.com/site/cartwrightraspberrypiprojects/home/ramblings/tutorials/using-github
  * Serial exchange from Pi to Arduino with heartbeats and watchdog  https://roboticsbackend.com/raspberry-pi-arduino-serial-communication/
  * Pi Status/Mode indicator LED
 https://learn.adafruit.com/adafruit-neopixel-uberguide/arduino-library-use?gad_source=1&gclid=CjwKCAiA65m7BhAwEiwAAgu4JD9FtCgHHnpN_hr-w3SNC3MJHgO5yg_ghjP4fyLUVrk08GC1Uknm7RoCm38QAvD_BwE
@@ -21,7 +19,9 @@ CAN motor control https://forums.raspberrypi.com/viewtopic.php?t=296117
  * ROS integration https://docs.ros.org/en/foxy/How-To-Guides/Installing-on-Raspberry-Pi.html
 
 ## References: 
-   * https://www.printables.com/model/106225-modular-snap-together-raspberry-pi-2b3b3b4-case-w-
+   * Pi safe shutdown button https://scribles.net/adding-power-switch-on-raspberry-pi/
+   * Setup Github on Pi's https://www.theserverside.com/blog/Coffee-Talk-Java-News-Stories-and-Opinions/Fix-GitHubs-support-for-password-authentication-was-removed-error
+   * Pi4 case https://www.printables.com/model/106225-modular-snap-together-raspberry-pi-2b3b3b4-case-w-
    * https://www.raspberrypi.com/documentation/computers/
    * Pin out and Pi references https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#gpio
    * https://docs.arduino.cc/learn/electronics/servo-motors/
