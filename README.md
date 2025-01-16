@@ -28,29 +28,15 @@ CAN motor control https://forums.raspberrypi.com/viewtopic.php?t=296117
    * Kitronik Simply Servos Board for Raspberry Pi Pico https://www.sparkfun.com/products/20040
         https://github.com/KitronikLtd/Kitronik-Pico-Simply-Servos-MicroPython
 
-## Log
+## Build Instructions
  1. Setup hardware
     * Yardbot - endless hours to build
     * Raspberry Pi4 and supplies
     * Wide FoV Pi camera
     * 5x Jaguar Speed controllers or other PWM motor controller
  2. Wiring
-    * Pi
-        * GPIO reset button
-        * Pi Camera
-        * Stadia Controller (Bluetooth)
-    * Arduino
-        1. Left Motor (PWM)
-        2. Right Motor (PWM)
-        3. Dump Motor (PWM)
-        4. ws2811 LED string; Top, Front Left, Front Right
-        5. Front Bumper
-        6. Rear Bumper
-        7. Front Left Sonar
-        8. Front Right Sonar
-        9. Rear Sonar
-        10. ToF Sensor (I2C)
+    * Pin layout in Arduino firmware
  3. Install Raspberry Pi OS using Raspberry Pi Imager https://www.raspberrypi.com/software/
- 4. Configure wifi and bluetooth connections
+ 4. Configure wifi (2.4 ghz) and bluetooth connections
  5. Mount, power, and connect
  6. ...
