@@ -39,4 +39,7 @@ CAN motor control https://forums.raspberrypi.com/viewtopic.php?t=296117
  3. Install Raspberry Pi OS using Raspberry Pi Imager https://www.raspberrypi.com/software/
  4. Configure wifi (2.4 ghz) and bluetooth connections
  5. Mount, power, and connect
- 6. ...
+ 6. From Terminal (Requires a github personal access token, under developer settings)
+    * sudo apt-get install arduino
+    * git clone https://github.com/rsmith8/robot.git
+  7. ...
