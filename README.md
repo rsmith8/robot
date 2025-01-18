@@ -1,5 +1,5 @@
 # Code useful for home robots
-* Motor controls and some sensor integration on the Arduino Nano.
+* Motor controls and digital sensor integration on the Arduino Nano.
     * Rationale: they have large example sets, are pretty forgiving hardware, cheap, and already are on hand.
 * Higher level and more complex logic will be handled through Python on the Raspberry Pi 4.
     * Rationale: adequate guides and similar examples, relatively cheap, and are already on hand.
@@ -8,9 +8,7 @@
 ## To Do:
  * https://learn.adafruit.com/program-an-avr-or-arduino-using-raspberry-pi-gpio-pins/installation or https://magpi.raspberrypi.com/articles/program-arduino-uno-raspberry-pi
  * Serial exchange from Pi to Arduino with heartbeats and watchdog  https://roboticsbackend.com/raspberry-pi-arduino-serial-communication/
- * Pi Status/Mode indicator LED
-https://learn.adafruit.com/adafruit-neopixel-uberguide/arduino-library-use?gad_source=1&gclid=CjwKCAiA65m7BhAwEiwAAgu4JD9FtCgHHnpN_hr-w3SNC3MJHgO5yg_ghjP4fyLUVrk08GC1Uknm7RoCm38QAvD_BwE
- * Camera functionality https://www.raspberrypi.com/documentation/computers/camera_software.html#rpicam-apps
+ * Camera functionality tensor flow or https://www.raspberrypi.com/documentation/computers/camera_software.html#rpicam-apps
  * Establish Modes through controller buttons
     1. Stop
     2. Stadia controlled
