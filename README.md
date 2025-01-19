@@ -6,7 +6,6 @@
 * This code will be used with differential drive robots, that will share the same root code and much of its functionality, with special configurations being addressed as the time comes.
 
 ## To Do:
- * https://learn.adafruit.com/program-an-avr-or-arduino-using-raspberry-pi-gpio-pins/installation or https://magpi.raspberrypi.com/articles/program-arduino-uno-raspberry-pi
  * Serial exchange from Pi to Arduino with heartbeats and watchdog  https://roboticsbackend.com/raspberry-pi-arduino-serial-communication/
  * Camera functionality tensor flow or https://www.raspberrypi.com/documentation/computers/camera_software.html#rpicam-apps
  * Establish Modes through controller buttons
@@ -19,6 +18,7 @@ CAN motor control https://forums.raspberrypi.com/viewtopic.php?t=296117
 
 ## References: 
    * Pi safe shutdown button https://scribles.net/adding-power-switch-on-raspberry-pi/
+   * Setup Arduino on Pi (scroll down to ARM) https://magpi.raspberrypi.com/articles/program-arduino-uno-raspberry-pi
    * Setup Github on Pi's https://www.theserverside.com/blog/Coffee-Talk-Java-News-Stories-and-Opinions/Fix-GitHubs-support-for-password-authentication-was-removed-error
    * Pi4 case https://www.printables.com/model/106225-modular-snap-together-raspberry-pi-2b3b3b4-case-w-
    * https://www.raspberrypi.com/documentation/computers/
