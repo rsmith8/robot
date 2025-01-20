@@ -63,7 +63,7 @@ def main():
                 if event.code == evdev.ecodes.ABS_Y:  # Left stick Y-axis
                     left_y = event.value
                     ser.write(f"L{left_y}\n".encode())
-                elif event.code == evdev.ecodes.ABS_RY:  # Right stick Y-axis
+                elif event.code == evdev.ecodes.ABS_RZ:  # Right stick Y-axis
                     right_y = event.value
                     ser.write(f"R{right_y}\n".encode())
     except KeyboardInterrupt:
