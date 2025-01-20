@@ -6,6 +6,7 @@
 * This code will be used with differential drive robots, that will share the same root code and much of its functionality, with special configurations being addressed as the time comes.
 
 ## To Do:
+ * read evedev and send serial data to arduino 
  * Serial exchange from Pi to Arduino with heartbeats and watchdog  https://roboticsbackend.com/raspberry-pi-arduino-serial-communication/
  * Camera functionality tensor flow or https://www.raspberrypi.com/documentation/computers/camera_software.html#rpicam-apps
  * Establish Modes through controller buttons
@@ -41,4 +42,6 @@ CAN motor control https://forums.raspberrypi.com/viewtopic.php?t=296117
  6. From Terminal (Requires a github personal access token, under developer settings)
     * git clone https://github.com/rsmith8/robot.git
     * setup Arduino https://magpi.raspberrypi.com/articles/program-arduino-uno-raspberry-pi
+    * sudo apt install python3-evdev
+    * 
   7. ...
