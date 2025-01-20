@@ -43,5 +43,6 @@ CAN motor control https://forums.raspberrypi.com/viewtopic.php?t=296117
     * git clone https://github.com/rsmith8/robot.git
     * setup Arduino https://magpi.raspberrypi.com/articles/program-arduino-uno-raspberry-pi
     * sudo apt install python3-evdev
+       * python -m evdev.evtest
     * 
   7. ...
