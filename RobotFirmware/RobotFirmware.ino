@@ -13,8 +13,8 @@
  USB
   --
   PIN D13 Sonar REAR TRIG               (Wired)
-  PIN A0 PWM Throttle                   (wired)
-  PIN A1 PWM Steer                      (wired)
+  PIN A0/D14 PWM Left/Throttle          (wired)
+  PIN A1/D15 PWM Right/Steer            (wired)
   PIN A4 ToF SDA I2C bus at 115200 baud (wired)
   PIN A5 ToF SCL I2C bus at 115200 baud (wired)
   PIN 29 GND                            (Wired)
