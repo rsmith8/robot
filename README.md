@@ -19,7 +19,7 @@ CAN motor control https://forums.raspberrypi.com/viewtopic.php?t=296117
 ## References: 
    * Pi safe shutdown button https://scribles.net/adding-power-switch-on-raspberry-pi/
    * Setup Arduino on Pi (scroll down to ARM) https://magpi.raspberrypi.com/articles/program-arduino-uno-raspberry-pi
-   * Setup Github on Pi https://www.theserverside.com/blog/Coffee-Talk-Java-News-Stories-and-Opinions/Fix-GitHubs-support-for-password-authentication-was-removed-error, then fix SSH keys https://mkyong.com/git/github-keep-asking-for-username-password-when-git-push/
+   * Setup Github on Pi https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent https://www.theserverside.com/blog/Coffee-Talk-Java-News-Stories-and-Opinions/Fix-GitHubs-support-for-password-authentication-was-removed-error, then fix SSH keys https://mkyong.com/git/github-keep-asking-for-username-password-when-git-push/
      	1. git add --all
      	2. git commit -am "Notes..."
      	3. git push

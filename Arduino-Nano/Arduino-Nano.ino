@@ -62,42 +62,42 @@ void loop() {
     
     if (input.startsWith("L")) {
       int leftY = input.substring(1).toInt();
-      int leftPwmValue = map(leftY, 0, 255, 0, 180); // Map joystick value to PWM range
+      int leftPwmValue = map(leftY, 0, 255, 120, 60); // Map joystick value to PWM range
       leftPWM.write(leftPwmValue);
       analogWrite(leftPwmPin, leftPwmValue);
-      pixels.setPixelColor(1, pixels.Color(0, 0, 100)); //GRB
+      pixels.setPixelColor(0, pixels.Color(0, 0, 100)); //GRB
       alivecount=0;
     } 
     else if (input.startsWith("R")) {
       int rightY = input.substring(1).toInt();
-      int rightPwmValue = map(rightY, 0, 255, 0, 180); // Map joystick value to PWM range
+      int rightPwmValue = map(rightY, 0, 255, 60, 120); // Map joystick value to PWM range
       rightPWM.write(rightPwmValue);
-      pixels.setPixelColor(2, pixels.Color(0, 0, 100)); //GRB
+      pixels.setPixelColor(1, pixels.Color(0, 0, 100)); //GRB
       alivecount=0;
     }
     else if (input.startsWith("D")) {
       int lower_dump = input.substring(1).toInt();
       int DumpPwmValue = map(lower_dump, 0, 255, 90, 0); // Map joystick value to PWM range
       dumpPWM.write(DumpPwmValue);
-      pixels.setPixelColor(0, pixels.Color(0, 0, 100)); //GRB
+      pixels.setPixelColor(2, pixels.Color(0, 0, 100)); //GRB
       alivecount=0;
     }
     else if (input.startsWith("U")) {
       int raise_dump = input.substring(1).toInt();
       int RaisePwmValue = map(raise_dump, 0, 255, 90, 180); // Map joystick value to PWM range
       dumpPWM.write(RaisePwmValue);
-      pixels.setPixelColor(0, pixels.Color(0, 0, 100)); //GRB
+      pixels.setPixelColor(2, pixels.Color(0, 0, 100)); //GRB
       alivecount=0;
     }
 
 
   }
   else {
-      pixels.setPixelColor(0, pixels.Color(50, 50, 0)); //GRB
+      pixels.setPixelColor(2, pixels.Color(50, 50, 0)); //GRB
   }
   if (alivecount > 1000){
-      pixels.setPixelColor(1, pixels.Color(50, 50, 50)); //GRB
-      pixels.setPixelColor(2, pixels.Color(50, 50, 50)); //GRB    
+      pixels.setPixelColor(0, pixels.Color(50, 50, 50)); //GRB
+      pixels.setPixelColor(1, pixels.Color(50, 50, 50)); //GRB    
   }
 
   if (counter > 10){
