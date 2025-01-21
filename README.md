@@ -6,7 +6,6 @@
 * This code will be used with differential drive robots, that will share the same root code and much of its functionality, with special configurations being addressed as the time comes.
 
 ## To Do:
- * read evedev and send serial data to arduino 
  * Serial exchange from Pi to Arduino with heartbeats and watchdog  https://roboticsbackend.com/raspberry-pi-arduino-serial-communication/
  * Camera functionality tensor flow or https://www.raspberrypi.com/documentation/computers/camera_software.html#rpicam-apps
  * Establish Modes through controller buttons
