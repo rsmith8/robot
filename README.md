@@ -20,7 +20,9 @@ CAN motor control https://forums.raspberrypi.com/viewtopic.php?t=296117
 ## References: 
    * Pi safe shutdown button https://scribles.net/adding-power-switch-on-raspberry-pi/
    * Setup Arduino on Pi (scroll down to ARM) https://magpi.raspberrypi.com/articles/program-arduino-uno-raspberry-pi
-   * Setup Github on Pi -> account settings, Scroll down and click ‘Developer settings’ in the list of links to the left, Click the Personal access tokens link. https://www.theserverside.com/blog/Coffee-Talk-Java-News-Stories-and-Opinions/Fix-GitHubs-support-for-password-authentication-was-removed-error
+   * Setup Github on Pi
+	* account settings, Scroll down and click ‘Developer settings’ in the list of links to the left, Click the Personal access tokens link. https://www.theserverside.com/blog/Coffee-Talk-Java-News-Stories-and-Opinions/Fix-GitHubs-support-for-password-authentication-was-removed-error
+   	* SSH keys https://mkyong.com/git/github-keep-asking-for-username-password-when-git-push/
    * Pi4 case https://www.printables.com/model/106225-modular-snap-together-raspberry-pi-2b3b3b4-case-w-
    * https://www.raspberrypi.com/documentation/computers/
    * Pin out and Pi references https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#gpio

@@ -10,13 +10,10 @@ Steps to Run the Program:
    Ensure the following packages are installed on your Raspberry Pi:
    $ sudo apt update
    $ sudo apt install python3-evdev python3-serial
-
 2. Connect Stadia Controller via Bluetooth:
    Pair the Stadia controller with your Raspberry Pi using the Bluetooth settings.
-
 3. Connect Arduino Nano:
    Plug the Arduino Nano into the Raspberry Pi via USB and note the serial port (e.g., /dev/ttyUSB0).
-
 4. Run the Script:
    Save the script as 'stadia_to_arduino.py' and run it:
    $ python3 stadia_to_arduino.py
@@ -28,7 +25,7 @@ import time
 
 # Configure the serial port
 SERIAL_PORT = '/dev/ttyUSB0'  # Adjust to match your Arduino Nano's port
-BAUD_RATE = 9600
+BAUD_RATE = 115200
 
 def find_stadia_controller():
     """Find the Stadia controller device."""
@@ -57,7 +54,7 @@ def main():
 
     # Read joystick events and send data to Arduino
     try:
-        for event in stadia_controller.read_loop():
+        for event in stadia_controller.read_loop(): #find event codes with "python -m evdev.evtest"
             if event.type == evdev.ecodes.EV_ABS:
                 # Get joystick Y-axis values
                 if event.code == evdev.ecodes.ABS_Y:  # Left stick Y-axis
@@ -66,6 +63,13 @@ def main():
                 elif event.code == evdev.ecodes.ABS_RZ:  # Right stick Y-axis
                     right_y = event.value
                     ser.write(f"R{right_y}\n".encode())
+                elif event.code == evdev.ecodes.ABS_BRAKE:  # Left Trigger
+                    lower_dump = event.value
+                    ser.write(f"D{lower_dump}\n".encode())
+                elif event.code == evdev.ecodes.ABS_GAS:  # Right Trigger
+                    raise_dump = event.value
+                    ser.write(f"U{raise_dump}\n".encode())
+                
     except KeyboardInterrupt:
         print("\nExiting program.")
     finally:

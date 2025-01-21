@@ -1,7 +1,7 @@
 // NeoPixel Ring simple sketch (c) 2013 Shae Erisson
 // Released under the GPLv3 license to match the rest of the
 // Adafruit NeoPixel library
-
+#include <Servo.h>
 #include <Adafruit_NeoPixel.h>
 #ifdef __AVR__
  #include <avr/power.h> // Required for 16 MHz Adafruit Trinket
@@ -21,10 +21,16 @@ Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 
 #define DELAYVAL 1000 // Time (in milliseconds) to pause between pixels
 
-const int leftPwmPin = 14;  // PWM output for left joystick
-const int rightPwmPin = 15; // PWM output for right joystick
+const int leftPwmPin = 14;  // PWM output for left joystick is 14 on yardbot - test board is 6
+const int rightPwmPin = 15; // PWM output for right joystick is 15 on yardbot - test board is 6
+const int dumpPwmPin = 16; // PWM output for right joystick is 16 on yardbot - test board is 6
 
 int counter=0;
+int alivecount=0;
+
+Servo leftPWM;
+Servo rightPWM;  // create servo object to control a servo
+Servo dumpPWM;
 
 void setup() {
   // These lines are specifically to support the Adafruit Trinket 5V 16 MHz.
@@ -36,9 +42,10 @@ void setup() {
 
   pixels.begin(); // INITIALIZE NeoPixel strip object (REQUIRED)
   
-  Serial.begin(9600);
-  pinMode(leftPwmPin, OUTPUT);
-  pinMode(rightPwmPin, OUTPUT);
+  Serial.begin(115200);
+  leftPWM.attach(leftPwmPin);  // attaches the servo on pin to the servo object
+  rightPWM.attach(rightPwmPin);  // attaches the servo on pin to the servo object
+  dumpPWM.attach(dumpPwmPin);  // attaches the servo on pin to the servo object
   pixels.setPixelColor(0, pixels.Color(0, 50, 0)); //GRB
   pixels.setPixelColor(1, pixels.Color(0, 50, 0)); //GRB
   pixels.setPixelColor(2, pixels.Color(0, 50, 0)); //GRB
@@ -55,27 +62,49 @@ void loop() {
     
     if (input.startsWith("L")) {
       int leftY = input.substring(1).toInt();
-      int leftPwmValue = map(leftY, 0, 255, 0, 255); // Map joystick value to PWM range
+      int leftPwmValue = map(leftY, 0, 255, 0, 180); // Map joystick value to PWM range
+      leftPWM.write(leftPwmValue);
       analogWrite(leftPwmPin, leftPwmValue);
-      pixels.setPixelColor(1, pixels.Color(0, 100, 0)); //GRB
+      pixels.setPixelColor(1, pixels.Color(0, 0, 100)); //GRB
+      alivecount=0;
     } 
     else if (input.startsWith("R")) {
       int rightY = input.substring(1).toInt();
-      int rightPwmValue = map(rightY, 0, 255, 0, 255); // Map joystick value to PWM range
-      analogWrite(rightPwmPin, rightPwmValue);
+      int rightPwmValue = map(rightY, 0, 255, 0, 180); // Map joystick value to PWM range
+      rightPWM.write(rightPwmValue);
       pixels.setPixelColor(2, pixels.Color(0, 0, 100)); //GRB
+      alivecount=0;
     }
+    else if (input.startsWith("D")) {
+      int lower_dump = input.substring(1).toInt();
+      int DumpPwmValue = map(lower_dump, 0, 255, 90, 0); // Map joystick value to PWM range
+      dumpPWM.write(DumpPwmValue);
+      pixels.setPixelColor(0, pixels.Color(0, 0, 100)); //GRB
+      alivecount=0;
+    }
+    else if (input.startsWith("U")) {
+      int raise_dump = input.substring(1).toInt();
+      int RaisePwmValue = map(raise_dump, 0, 255, 90, 180); // Map joystick value to PWM range
+      dumpPWM.write(RaisePwmValue);
+      pixels.setPixelColor(0, pixels.Color(0, 0, 100)); //GRB
+      alivecount=0;
+    }
+
 
   }
   else {
       pixels.setPixelColor(0, pixels.Color(50, 50, 0)); //GRB
   }
-  
-  if (counter > 100){
-    pixels.show();   // Send the updated pixel colors to the hardware.
-    counter=0;
+  if (alivecount > 1000){
+      pixels.setPixelColor(1, pixels.Color(50, 50, 50)); //GRB
+      pixels.setPixelColor(2, pixels.Color(50, 50, 50)); //GRB    
   }
 
+  if (counter > 10){
+    pixels.show();   // Send the updated pixel colors to the hardware.
+    counter=0;
+  }    
+
   counter++;
-  
+  alivecount++;
 }
