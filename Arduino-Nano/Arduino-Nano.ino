@@ -1,5 +1,5 @@
-const int leftPwmPin = A0;  // PWM output for left joystick
-const int rightPwmPin = A1; // PWM output for right joystick
+const int leftPwmPin = 14;  // PWM output for left joystick
+const int rightPwmPin = 15; // PWM output for right joystick
 
 void setup() {
   Serial.begin(9600);
