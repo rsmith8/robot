@@ -62,7 +62,7 @@ void loop() {
     
     if (input.startsWith("L")) {
       int leftY = input.substring(1).toInt();
-      int leftPwmValue = map(leftY, 0, 255, 120, 60); // Map joystick value to PWM range
+      int leftPwmValue = map(leftY, 0, 255, 135, 45); // Map joystick value to PWM range
       leftPWM.write(leftPwmValue);
       analogWrite(leftPwmPin, leftPwmValue);
       pixels.setPixelColor(0, pixels.Color(0, 0, 100)); //GRB
@@ -70,21 +70,21 @@ void loop() {
     } 
     else if (input.startsWith("R")) {
       int rightY = input.substring(1).toInt();
-      int rightPwmValue = map(rightY, 0, 255, 60, 120); // Map joystick value to PWM range
+      int rightPwmValue = map(rightY, 0, 255, 45, 135); // Map joystick value to PWM range
       rightPWM.write(rightPwmValue);
       pixels.setPixelColor(1, pixels.Color(0, 0, 100)); //GRB
       alivecount=0;
     }
     else if (input.startsWith("D")) {
       int lower_dump = input.substring(1).toInt();
-      int DumpPwmValue = map(lower_dump, 0, 255, 90, 0); // Map joystick value to PWM range
+      int DumpPwmValue = map(lower_dump, 0, 255, 90, 15); // Map joystick value to PWM range
       dumpPWM.write(DumpPwmValue);
       pixels.setPixelColor(2, pixels.Color(0, 0, 100)); //GRB
       alivecount=0;
     }
     else if (input.startsWith("U")) {
       int raise_dump = input.substring(1).toInt();
-      int RaisePwmValue = map(raise_dump, 0, 255, 90, 180); // Map joystick value to PWM range
+      int RaisePwmValue = map(raise_dump, 0, 255, 90, 165); // Map joystick value to PWM range
       dumpPWM.write(RaisePwmValue);
       pixels.setPixelColor(2, pixels.Color(0, 0, 100)); //GRB
       alivecount=0;
