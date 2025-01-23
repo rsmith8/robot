@@ -29,6 +29,7 @@ CAN motor control https://forums.raspberrypi.com/viewtopic.php?t=296117
    * https://docs.arduino.cc/learn/electronics/servo-motors/
    * Kitronik Simply Servos Board for Raspberry Pi Pico https://www.sparkfun.com/products/20040
         https://github.com/KitronikLtd/Kitronik-Pico-Simply-Servos-MicroPython
+   * Bluetoothctl issues fixed: https://raspberrypi.stackexchange.com/questions/122429/raspberry-pi-4-wont-pair-to-bluetooth-devices
 
 ## Build Instructions
  1. Setup hardware
