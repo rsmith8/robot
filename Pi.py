@@ -26,6 +26,7 @@ import time
 # Configure the serial port
 SERIAL_PORT = '/dev/ttyUSB0'  # Adjust to match your Arduino Nano's port
 BAUD_RATE = 115200
+devcount = 0
 
 def find_stadia_controller():
     """Find the Stadia controller device."""
@@ -35,45 +36,57 @@ def find_stadia_controller():
             return device
     raise RuntimeError("Stadia controller not found. Make sure it is connected via Bluetooth.")
 
-def main():
-    # Connect to the Stadia controller
-    try:
-        stadia_controller = find_stadia_controller()
-        print(f"Connected to {stadia_controller.name} at {stadia_controller.path}")
-    except RuntimeError as e:
-        print(e)
-        return
+def main(devcount):
+#    devcount=0
+    while True:
+        if devcount!=2:
+            # Connect to the Stadia controller
+            try:
+                stadia_controller = find_stadia_controller()
+                print(f"Connected to {stadia_controller.name} at {stadia_controller.path}")
+                devcount=1
+                break # only triggered if input is
+            
+            except RuntimeError as e:
+                print(e)
+                devcount=0
+    #            return
 
-    # Open serial connection to Arduino
-    try:
-        ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
-        print(f"Connected to Arduino on {SERIAL_PORT}")
-    except serial.SerialException as e:
-        print(f"Error connecting to serial port: {e}")
-        return
-
-    # Read joystick events and send data to Arduino
-    try:
-        for event in stadia_controller.read_loop(): #find event codes with "python -m evdev.evtest"
-            if event.type == evdev.ecodes.EV_ABS:
-                # Get joystick Y-axis values
-                if event.code == evdev.ecodes.ABS_Y:  # Left stick Y-axis
-                    left_y = event.value
-                    ser.write(f"L{left_y}\n".encode())
-                elif event.code == evdev.ecodes.ABS_RZ:  # Right stick Y-axis
-                    right_y = event.value
-                    ser.write(f"R{right_y}\n".encode())
-                elif event.code == evdev.ecodes.ABS_BRAKE:  # Left Trigger
-                    lower_dump = event.value
-                    ser.write(f"D{lower_dump}\n".encode())
-                elif event.code == evdev.ecodes.ABS_GAS:  # Right Trigger
-                    raise_dump = event.value
-                    ser.write(f"U{raise_dump}\n".encode())
-                
-    except KeyboardInterrupt:
-        print("\nExiting program.")
-    finally:
-        ser.close()
+            # Open serial connection to Arduino
+            try:
+                ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
+                print(f"Connected to Arduino on {SERIAL_PORT}")
+                if devcount==1:
+                    devcount=2
+                else:
+                    devcount=1
+            except serial.SerialException as e:
+                print(f"Error connecting to serial port: {e}")
+    #            return
+        else:
+            
+            # Read joystick events and send data to Arduino
+            try:
+                for event in stadia_controller.read_loop(): #find event codes with "python -m evdev.evtest"
+                    if event.type == evdev.ecodes.EV_ABS:
+                        # Get joystick Y-axis values
+                        if event.code == evdev.ecodes.ABS_Y:  # Left stick Y-axis
+                            left_y = event.value
+                            ser.write(f"L{left_y}\n".encode())
+                        elif event.code == evdev.ecodes.ABS_RZ:  # Right stick Y-axis
+                            right_y = event.value
+                            ser.write(f"R{right_y}\n".encode())
+                        elif event.code == evdev.ecodes.ABS_BRAKE:  # Left Trigger
+                            lower_dump = event.value
+                            ser.write(f"D{lower_dump}\n".encode())
+                        elif event.code == evdev.ecodes.ABS_GAS:  # Right Trigger
+                            raise_dump = event.value
+                            ser.write(f"U{raise_dump}\n".encode())
+                        
+            except KeyboardInterrupt:
+                print("\nExiting program.")
+            finally:
+                ser.close()
 
 if __name__ == "__main__":
-    main()
+    main(devcount)
