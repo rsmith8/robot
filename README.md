@@ -49,5 +49,9 @@ CAN motor control https://forums.raspberrypi.com/viewtopic.php?t=296117
     * setup Arduino https://magpi.raspberrypi.com/articles/program-arduino-uno-raspberry-pi
     * sudo apt install python3-evdev
        * python -m evdev.evtest
-    * 
+    * start script Pi.py: sudo nano /etc/xdg/autostart/display.desktop
+        [Desktop Entry]
+        Name=PiCounter
+        Exec=/usr/bin/python3 /home/rs/robot/Pi.py
+        
   7. ...
