@@ -32,6 +32,7 @@
 
 #include <Servo.h>
 #include <Adafruit_NeoPixel.h>
+#include <Wire.h>
 
 byte deviceAddress = 0x10;  // The address of the TF-Luna device is 0x10
 #define PIN 10              //Neopixel is attached to  
@@ -41,8 +42,8 @@ int delayval = 100;         // timing delay in milliseconds pause between pixels
 unsigned int distance = 0;  // counts connected arduino and stadia devices
 int counter=0;
 int alivecount=0;
-int range_stop=15;
-int range_close=45;
+int range_stop=20;
+int range_close=100;
 
 
 const int leftPwmPin = 14;  // PWM output for left joystick is 14 on yardbot - test board is 6
@@ -84,35 +85,36 @@ void loop() {
         
     if (input.startsWith("L")) { //Left Joystick Input
       int leftY = input.substring(1).toInt();
-      if (distance<range_close){
-        if (leftY>128){
-          int leftPwmValue = 90;
+      if (distance<range_stop){
+        if (leftY<127){
+          leftY = 127;
         }
+      }
       else if (distance<=range_close){
-        int leftPwmValue = map(leftY, 0, 255, 125, 55); // Map joystick value to PWM range 180-0 full range
+        if (leftY<127){
+          leftY = 127-((127-leftY)*.5);
+        }
       }
-      else{
-        int leftPwmValue = map(leftY, 0, 255, 135, 45); // Map joystick value to PWM range 180-0 full range
-      }
+      int leftPwmValue = map(leftY, 0, 255, 135, 45); // Map joystick value to PWM range 180-0 full range
       leftPWM.write(leftPwmValue);
-      analogWrite(leftPwmPin, leftPwmValue);
-      pixels.setPixelColor(0, pixels.Color(0, 0, 100)); //GRB
+      pixels.setPixelColor(1, pixels.Color(0, 0, 100)); //GRB
       alivecount=0;
     } 
     else if (input.startsWith("R")) { //Right Joystick Input
       int rightY = input.substring(1).toInt();
-      if (distance<range_close){
-        if (rightY>128){
-          int rightPwmValue = 90;
+      if (distance<range_stop){
+        if (rightY<127){
+          rightY = 127;
         }
+      }
       else if (distance<=range_close){
-        int rightPwmValue = map(rightY, 0, 255, 55, 125); // Map joystick value to PWM range 180-0 full range
+        if (rightY<127){
+          rightY = 127-((127-rightY)*.5);
+        }
       }
-      else{
-        int rightPwmValue = map(rightY, 0, 255, 45, 135); // Map joystick value to PWM range 180-0 full range
-      }
+      int rightPwmValue = map(rightY, 0, 255, 45, 135); // Map joystick value to PWM range 180-0 full range
       rightPWM.write(rightPwmValue);
-      pixels.setPixelColor(1, pixels.Color(0, 0, 100)); //GRB using Blue to indicate controller input
+      pixels.setPixelColor(0, pixels.Color(0, 0, 100)); //GRB using Blue to indicate controller input
       alivecount=0;
     }
     else if (input.startsWith("D")) { //Right Trigger Input
@@ -144,12 +146,11 @@ void loop() {
     pixels.setPixelColor(2, pixels.Color(100, 100, 100));  //green, red, blue
   }
 
-  if (alivecount > 1000){ //After a while no input reset to white signal
+  if (alivecount > 100){ //After a while no input reset to white signal
       pixels.setPixelColor(0, pixels.Color(50, 50, 50)); //GRB using White to illuminate while indicating on/ready 
       pixels.setPixelColor(1, pixels.Color(50, 50, 50)); //GRB using White to illuminate while indicating on/ready  
   }
-
-  if (counter > 10){ //counter used to implement recommended delay for sending light updates 
+  if (counter > 5){ //counter used to implement recommended delay for sending light updates 
     pixels.show();   // Send the updated pixel colors to the hardware.
     counter=0;
   }    
