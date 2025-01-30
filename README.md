@@ -53,5 +53,7 @@ CAN motor control https://forums.raspberrypi.com/viewtopic.php?t=296117
         [Desktop Entry]
         Name=robot
         Exec=/usr/bin/python3 /home/rs/robot/Pi.py
-        
+    *python3 -m pip config set global.break-system-packages true
+    * pip3 install pvorca
+
   7. ...
