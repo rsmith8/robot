@@ -43,7 +43,7 @@ CAN motor control https://forums.raspberrypi.com/viewtopic.php?t=296117
     * Pin layout in Arduino firmware
  3. Install Raspberry Pi OS using Raspberry Pi Imager https://www.raspberrypi.com/software/
  4. Configure wifi (2.4 ghz) and bluetooth connections
- 5. Mount, power, and connect
+ 5. Mount, power, and connect pinout for arduino firmware
  6. From Terminal (Requires a github personal access token, under developer settings)
     * git clone https://github.com/rsmith8/robot.git
     * setup Arduino https://magpi.raspberrypi.com/articles/program-arduino-uno-raspberry-pi
@@ -55,7 +55,7 @@ CAN motor control https://forums.raspberrypi.com/viewtopic.php?t=296117
         Exec=/usr/bin/python3 /home/rs/robot/Pi.py
     *python3 -m pip config set global.break-system-packages true
     * pip3 install pvorca
-   
+ 
 7. 
 
   7. ...
