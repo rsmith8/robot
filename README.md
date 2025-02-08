@@ -7,13 +7,13 @@
 
 ## To Do:
  * Serial exchange from Pi to Arduino with heartbeats and watchdog  https://roboticsbackend.com/raspberry-pi-arduino-serial-communication/
+ * voice activation PicoVoice control of modes
  * Camera functionality tensor flow or https://www.raspberrypi.com/documentation/computers/camera_software.html#rpicam-apps
  * Establish Modes through controller buttons
     1. Stop
     2. Stadia controlled
     3. OpenCV tracking or Open Bot
- * PicoVoice control of modes
-CAN motor control https://forums.raspberrypi.com/viewtopic.php?t=296117
+ * CAN motor control https://forums.raspberrypi.com/viewtopic.php?t=296117
  * ROS integration https://docs.ros.org/en/foxy/How-To-Guides/Installing-on-Raspberry-Pi.html
 
 ## References: 
