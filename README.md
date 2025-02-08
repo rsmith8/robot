@@ -6,8 +6,9 @@
 * This code will be used with differential drive robots, that will share the same root code and much of its functionality, with special configurations being addressed as the time comes.
 
 ## To Do:
- * Serial exchange from Pi to Arduino with heartbeats and watchdog  https://roboticsbackend.com/raspberry-pi-arduino-serial-communication/
+ * fix Bluetooth connection
  * voice activation PicoVoice control of modes
+ * Serial exchange from Pi to Arduino heartbeats and watchdog  https://roboticsbackend.com/raspberry-pi-arduino-serial-communication/
  * Camera functionality tensor flow or https://www.raspberrypi.com/documentation/computers/camera_software.html#rpicam-apps
  * Establish Modes through controller buttons
     1. Stop
