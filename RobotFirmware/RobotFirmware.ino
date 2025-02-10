@@ -6,7 +6,7 @@
   PIN D6 Sonar REAR ECHO                (Wired)
   PIN D8 Sonar  FL ECHO                 (Wired)
   PIN D9 Sonar  FL TRIG                 (Wired)
-  PIN D10 Neo                           (Wired) 1)RF-Bumper 2)LF-Bumper 3)Top (G,R,B)
+  PIN D10 Neo                           (Wired) 0)RF-Bumper 1)LF-Bumper 2)Top (G,R,B)
   PIN D11 Sonar FR ECHO                 (Wired)
   PIN D12 Sonar FR TRIG                 (Wired)
   --
