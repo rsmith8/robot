@@ -6,7 +6,12 @@
 * This code will be used with differential drive robots, that will share the same root code and much of its functionality, with special configurations being addressed as the time comes.
 
 ## To Do:
- * fix Bluetooth connection
+ * fix Bluetooth connection https://raspberrypi.stackexchange.com/questions/122429/raspberry-pi-4-wont-pair-to-bluetooth-devices/123914#123914 or https://forums.raspberrypi.com/viewtopic.php?t=304000
+ 	* Edit /usr/lib/systemd/system/bluetooth.service
+	* Add -d after ExecStart=/usr/libexec/bluetooth/bluetoothd
+	* Save.
+	* $ systemctl daemon-reload
+	* $ systemctl restart bluetooth
  * voice activation PicoVoice control of modes
  * Serial exchange from Pi to Arduino heartbeats and watchdog  https://roboticsbackend.com/raspberry-pi-arduino-serial-communication/
  * Camera functionality tensor flow or https://www.raspberrypi.com/documentation/computers/camera_software.html#rpicam-apps
