@@ -49,6 +49,7 @@ raspi-info
     * Raspberry Pi4 and supplies
     * Wide FoV Pi camera
     * 5x Jaguar Speed controllers or other PWM motor controller
+    * circuit breaker and fuse bus
  2. Wiring
     * Pin layout in Arduino firmware
  3. Install Raspberry Pi OS using Raspberry Pi Imager https://www.raspberrypi.com/software/
@@ -57,6 +58,7 @@ raspi-info
  6. From Terminal (Requires a github personal access token, under developer settings)
     * git clone https://github.com/rsmith8/robot.git
     * setup Arduino https://magpi.raspberrypi.com/articles/program-arduino-uno-raspberry-pi
+      * install nano firmware
     * sudo apt install python3-evdev
        * python -m evdev.evtest
     * start script Pi.py: sudo nano /etc/xdg/autostart/display.desktop https://www.makeuseof.com/how-to-run-a-raspberry-pi-program-script-at-startup/
@@ -65,7 +67,5 @@ raspi-info
         Exec=/usr/bin/python3 /home/rs/robot/Pi.py
     *python3 -m pip config set global.break-system-packages true
     * pip3 install pvorca
- 
-7. 
 
-  7. ...
+ 7. ...
