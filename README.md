@@ -6,7 +6,12 @@
 * This code will be used with differential drive robots, that will share the same root code and much of its functionality, with special configurations being addressed as the time comes.
 
 ## To Do:
- * fix Bluetooth connection
+ * fix Bluetooth connection https://raspberrypi.stackexchange.com/questions/122429/raspberry-pi-4-wont-pair-to-bluetooth-devices/123914#123914 or https://forums.raspberrypi.com/viewtopic.php?t=304000
+ 	* Edit /usr/lib/systemd/system/bluetooth.service
+	* Add -d after ExecStart=/usr/libexec/bluetooth/bluetoothd
+	* Save.
+	* $ systemctl daemon-reload
+	* $ systemctl restart bluetooth
  * voice activation PicoVoice control of modes
  * Serial exchange from Pi to Arduino heartbeats and watchdog  https://roboticsbackend.com/raspberry-pi-arduino-serial-communication/
  * Camera functionality tensor flow or https://www.raspberrypi.com/documentation/computers/camera_software.html#rpicam-apps
@@ -49,6 +54,7 @@ raspi-info
     * Raspberry Pi4 and supplies
     * Wide FoV Pi camera
     * 5x Jaguar Speed controllers or other PWM motor controller
+    * circuit breaker and fuse bus
  2. Wiring
     * Pin layout in Arduino firmware
  3. Install Raspberry Pi OS using Raspberry Pi Imager https://www.raspberrypi.com/software/
@@ -57,6 +63,7 @@ raspi-info
  6. From Terminal (Requires a github personal access token, under developer settings)
     * git clone https://github.com/rsmith8/robot.git
     * setup Arduino https://magpi.raspberrypi.com/articles/program-arduino-uno-raspberry-pi
+      * install nano firmware
     * sudo apt install python3-evdev
        * python -m evdev.evtest
     * start script Pi.py: sudo nano /etc/xdg/autostart/display.desktop https://www.makeuseof.com/how-to-run-a-raspberry-pi-program-script-at-startup/
@@ -65,7 +72,5 @@ raspi-info
         Exec=/usr/bin/python3 /home/rs/robot/Pi.py
     *python3 -m pip config set global.break-system-packages true
     * pip3 install pvorca
- 
-7. 
 
-  7. ...
+ 7. ...
