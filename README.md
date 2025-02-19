@@ -32,6 +32,11 @@
    * https://docs.arduino.cc/learn/electronics/servo-motors/
    * Kitronik Simply Servos Board for Raspberry Pi Pico https://www.sparkfun.com/products/20040
         https://github.com/KitronikLtd/Kitronik-Pico-Simply-Servos-MicroPython
+   * Mount and SD card https://www.wikihow.com/Linux-How-to-Mount-Drive#:~:text=To%20mount%20a%20drive%20on,to%20mount%20and%20unmount%20drives.
+      * lsblk -lf
+      * sudo mkdir /media/mydrive
+      * sudo mount /dev/XXXX /media/mydrive
+      * sudo umount /media/myflashdrive
    * Bluetoothctl issues fixed: https://raspberrypi.stackexchange.com/questions/122429/raspberry-pi-4-wont-pair-to-bluetooth-devices
    * Bluetooth use rfcomm https://forums.raspberrypi.com/viewtopic.php?t=320455
 
