@@ -12,7 +12,7 @@
 	* Save.
 	* $ systemctl daemon-reload
 	* $ systemctl restart bluetooth
- * voice activation PicoVoice control of modes
+ * voice activation PicoVoice control of modes https://picovoice.ai/docs/quick-start/orca-python/
  * Serial exchange from Pi to Arduino heartbeats and watchdog  https://roboticsbackend.com/raspberry-pi-arduino-serial-communication/
  * Camera functionality tensor flow or https://www.raspberrypi.com/documentation/computers/camera_software.html#rpicam-apps
  * Establish Modes through controller buttons
