@@ -49,18 +49,17 @@
 raspi-info
 
 ## Build Instructions
- 1. Setup hardware
+ 1. Hardware:
     * Yardbot - endless hours to build
     * Raspberry Pi4 and supplies
     * Wide FoV Pi camera
     * 5x Jaguar Speed controllers or other PWM motor controller
-    * circuit breaker and fuse bus
- 2. Wiring
-    * Pin layout in Arduino firmware
- 3. Install Raspberry Pi OS using Raspberry Pi Imager https://www.raspberrypi.com/software/
- 4. Configure wifi (2.4 ghz) and bluetooth connections
- 5. Mount, power, and connect pinout for arduino firmware
- 6. From Terminal (Requires a github personal access token, under developer settings)
+    * circuit breaker for battery and fuse bus for each peripherial
+    * Wiring pin layout in Arduino firmware
+ 2. Install Raspberry Pi OS using Raspberry Pi Imager https://www.raspberrypi.com/software/
+ 3. Configure Pi for wifi (2.4 ghz), VNC enabled, and bluetooth connection for controller
+ 4. Startup remove session and configure software 
+    * Get github personal access token - settings - developer settings, copy and paste as password
     * git clone https://github.com/rsmith8/robot.git
     * setup Arduino https://magpi.raspberrypi.com/articles/program-arduino-uno-raspberry-pi
       * install nano firmware
@@ -70,7 +69,7 @@ raspi-info
         [Desktop Entry]
         Name=robot
         Exec=/usr/bin/python3 /home/rs/robot/Pi.py
-    *python3 -m pip config set global.break-system-packages true
+    * python3 -m pip config set global.break-system-packages true
     * pip3 install pvorca
 
  7. ...
