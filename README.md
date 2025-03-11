@@ -62,6 +62,7 @@ raspi-info
     * Get github personal access token - settings - developer settings, copy and paste as password on clone command
     * git clone https://github.com/rsmith8/robot.git
     * setup Arduino https://magpi.raspberrypi.com/articles/program-arduino-uno-raspberry-pi
+      * install library -> Adafruit NeoPixel      
       * install nano firmware
     * sudo apt install python3-evdev
        * python -m evdev.evtest
