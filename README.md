@@ -71,7 +71,13 @@ raspi-info
           * @pcmanfm --desktop --profile LXDE-pi
           * @xscreensaver -no-splash
           * @lxterminal -e python3 /path/Pi.py - BROKE BLUETOOTH and did not open a terminal
-
+Software Issues:
+Outdated software or corrupted files can cause problems. 
+Solution:
+Update the system: sudo apt update && sudo apt upgrade. 
+Reinstall Bluetooth packages: sudo apt purge bluez && sudo apt install bluez. 
+Reinstall pi-bluetooth: sudo apt purge pi-bluetooth && sudo apt install pi-bluetooth. 
+https://return2.net/fix-bluetooth-problems-on-raspberry-pi-running-raspbian/
 
     * start script Pi.py sudo nano /etc/xdg/autostart/display.desktop https://www.makeuseof.com/how-to-run-a-raspberry-pi-program-script-at-startup/
         [Desktop Entry]
