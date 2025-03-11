@@ -65,6 +65,13 @@ raspi-info
       * install nano firmware
     * sudo apt install python3-evdev
        * python -m evdev.evtest
+    * Start script in terminal on startup - https://forums.raspberrypi.com/viewtopic.php?f=66&t=294014
+       * sudo nano /etc/xdg/lxsession/LXDE-pi/autostart
+          * @lxpanel --profile LXDE-pi
+          * @pcmanfm --desktop --profile LXDE-pi
+          * @xscreensaver -no-splash
+          * @lxterminal -e python3 /path/my_script.py
+
 
     * start script Pi.py sudo nano /etc/xdg/autostart/display.desktop https://www.makeuseof.com/how-to-run-a-raspberry-pi-program-script-at-startup/
         [Desktop Entry]
