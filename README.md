@@ -70,7 +70,7 @@ raspi-info
           * @lxpanel --profile LXDE-pi
           * @pcmanfm --desktop --profile LXDE-pi
           * @xscreensaver -no-splash
-          * @lxterminal -e python3 /path/my_script.py
+          * @lxterminal -e python3 /path/Pi.py - BROKE BLUETOOTH and did not open a terminal
 
 
     * start script Pi.py sudo nano /etc/xdg/autostart/display.desktop https://www.makeuseof.com/how-to-run-a-raspberry-pi-program-script-at-startup/
