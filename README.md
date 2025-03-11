@@ -25,7 +25,7 @@
 ## References: 
    * Pi safe shutdown button https://scribles.net/adding-power-switch-on-raspberry-pi/
    * Setup Arduino on Pi (scroll down to ARM) https://magpi.raspberrypi.com/articles/program-arduino-uno-raspberry-pi
-   * Setup Github on Pi (Remember SSH no longer works) https://www.theserverside.com/blog/Coffee-Talk-Java-News-Stories-and-Opinions/Fix-GitHubs-support-for-password-authentication-was-removed-error, then fix SSH keys https://mkyong.com/git/github-keep-asking-for-username-password-when-git-push/
+   * Setup Github on Pi (Remember SSH no longer works) https://www.theserverside.com/blog/Coffee-Talk-Java-News-Stories-and-Opinions/Fix-GitHubs-support-for-password-authentication-was-removed-error
       1. cd robot
 	   2. git pull
 	   3. git add --all #or file name eg. README.md
@@ -58,18 +58,19 @@ raspi-info
     * Wiring pin layout in Arduino firmware
  2. Install Raspberry Pi OS using Raspberry Pi Imager https://www.raspberrypi.com/software/
  3. Configure Pi for wifi (2.4 ghz), VNC enabled, and bluetooth connection for controller
- 4. Startup remove session and configure software 
-    * Get github personal access token - settings - developer settings, copy and paste as password
+ 4. Startup and configure software 
+    * Get github personal access token - settings - developer settings, copy and paste as password on clone command
     * git clone https://github.com/rsmith8/robot.git
     * setup Arduino https://magpi.raspberrypi.com/articles/program-arduino-uno-raspberry-pi
       * install nano firmware
     * sudo apt install python3-evdev
        * python -m evdev.evtest
-    * start script Pi.py: sudo nano /etc/xdg/autostart/display.desktop https://www.makeuseof.com/how-to-run-a-raspberry-pi-program-script-at-startup/
+
+    * start script Pi.py sudo nano /etc/xdg/autostart/display.desktop https://www.makeuseof.com/how-to-run-a-raspberry-pi-program-script-at-startup/
         [Desktop Entry]
         Name=robot
         Exec=/usr/bin/python3 /home/rs/robot/Pi.py
     * python3 -m pip config set global.break-system-packages true
     * pip3 install pvorca
 
- 7. ...
+ 5. ...
