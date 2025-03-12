@@ -60,6 +60,8 @@ raspi-info
  3. Configure Pi for wifi (2.4 ghz), VNC enabled, and bluetooth connection for controller
  4. Startup and configure software 
     * Get github personal access token - settings - developer settings, copy and paste as password on clone command
+      * sudo apt install gh
+      * 
     * git clone https://github.com/rsmith8/robot.git
     * setup Arduino https://magpi.raspberrypi.com/articles/program-arduino-uno-raspberry-pi
       * install library -> Adafruit NeoPixel      
