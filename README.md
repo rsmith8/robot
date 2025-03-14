@@ -77,9 +77,7 @@ raspi-info
              * Reinstall pi-bluetooth: sudo apt purge pi-bluetooth && sudo apt install pi-bluetooth. 
 
     * start script Pi.py sudo nano /etc/xdg/autostart/display.desktop https://www.makeuseof.com/how-to-run-a-raspberry-pi-program-script-at-startup/
-        [Desktop Entry]
-        Name=robot
-        Exec=/usr/bin/python3 /home/rs/robot/Pi.py
+
     * python3 -m pip config set global.break-system-packages true
     * pip3 install pvorca
 
