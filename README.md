@@ -54,7 +54,7 @@ raspi-info
     * Yardbot - endless hours to build
     * Raspberry Pi4 and supplies
     * Wide FoV Pi camera
-    * TF-Luna LIDAR Sensor
+    * TF-Luna Sensor on I2C
     * 5x Jaguar Speed controllers or other PWM motor controller
     * circuit breaker for battery and fuse bus for each peripherial
     * Wiring pin layout in Arduino firmware
