@@ -44,6 +44,7 @@
       * sudo umount /media/myflashdrive
    * Bluetoothctl issues fixed: https://raspberrypi.stackexchange.com/questions/122429/raspberry-pi-4-wont-pair-to-bluetooth-devices
    * Bluetooth use rfcomm https://forums.raspberrypi.com/viewtopic.php?t=320455
+   * TF Luna sensor example https://www.waveshare.com/wiki/TF-Luna_LiDAR_Range_Sensor
 
    https://forums.raspberrypi.com/viewtopic.php?p=2292242&hilit=Bluetooth#p2292242
 raspi-info
@@ -53,6 +54,7 @@ raspi-info
     * Yardbot - endless hours to build
     * Raspberry Pi4 and supplies
     * Wide FoV Pi camera
+    * TF-Luna LIDAR Sensor
     * 5x Jaguar Speed controllers or other PWM motor controller
     * circuit breaker for battery and fuse bus for each peripherial
     * Wiring pin layout in Arduino firmware
