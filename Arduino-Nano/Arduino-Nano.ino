@@ -39,8 +39,9 @@ byte deviceAddress = 0x10;  // The address of the TF-Luna device is 0x10
 #define NUMPIXELS   3       // number of neopixels in strip  
 Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 int delayval = 100;         // timing delay in milliseconds pause between pixels 
-unsigned int distance = 0;  // counts connected arduino and stadia devices
-int counter=0;
+unsigned int distance = 0;  // TF-Luna signal
+unsigned int signalStrength = 110; // TF-Luna signal range mp 100>Amp<65535
+int counter=0;            // counts connected arduino and stadia devices
 int alivecount=0;
 int range_stop=20;
 int range_close=100;
@@ -77,7 +78,7 @@ void loop() {
       data[i] = Wire.read(); //Read data into an array
     }
     distance = (data[1] << 8) | data[0]; //Distance Value
-    unsigned int signalStrength = (data[3] << 8) | data[2]; //Signal Strength
+    signalStrength = (data[3] << 8) | data[2]; //Signal Strength Signal Dist value is unreliable when Amp < 100 or Amp = 65535 (Overexposure) 
   }
 
   if (Serial.available()) {
@@ -85,7 +86,7 @@ void loop() {
         
     if (input.startsWith("L")) { //Left Joystick Input
       int leftY = input.substring(1).toInt();
-      if (distance<range_stop){
+      if ((distance<range_stop)&&(signalStrength>150)&&(signalStrength<55000)){
         if (leftY<127){
           leftY = 127;
         }
@@ -102,7 +103,7 @@ void loop() {
     } 
     else if (input.startsWith("R")) { //Right Joystick Input
       int rightY = input.substring(1).toInt();
-      if (distance<range_stop){
+      if ((distance<range_stop)&&(signalStrength>150)&&(signalStrength<55000)){
         if (rightY<127){
           rightY = 127;
         }
@@ -133,11 +134,14 @@ void loop() {
     }
   }
   
-  if (distance<=range_stop){ //Too Close - Stop
+  if ((distance<=range_stop)&&(signalStrength>150)&&(signalStrength<55000)){ //Too Close - Stop
     pixels.setPixelColor(2, pixels.Color(0, 200, 0));  //green, red, blue
   }
+  else if ((distance<=range_stop)&&((signalStrength<150)||(signalStrength>55000))){ //Too Close - Stop
+    pixels.setPixelColor(2, pixels.Color(100, 200, 100));  //green, red, blue
+  }
   else if (distance<=range_close){ //Caution slow down
-    pixels.setPixelColor(2, pixels.Color(200, 200, 0));  //green, red, blue
+    pixels.setPixelColor(2, pixels.Color(150, 150, 0));  //green, red, blue
   }
   else if (distance > range_close){ //Safe Range
     pixels.setPixelColor(2, pixels.Color(200, 0, 0));  //green, red, blue
