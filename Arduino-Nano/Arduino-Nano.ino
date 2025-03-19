@@ -91,12 +91,12 @@ void loop() {
           leftY = 127;
         }
       }
-      else if (distance<=range_close){
+      else if ((distance<=range_close)&&(signalStrength>150)&&(signalStrength<55000)){
         if (leftY<127){
           leftY = 127-((127-leftY)*.5);
         }
       }
-      int leftPwmValue = map(leftY, 0, 255, 135, 45); // Map joystick value to PWM range 180-0 full range
+      int leftPwmValue = map(leftY, 0, 255, 175, 5); // Map joystick value to PWM range 180-0 full range
       leftPWM.write(leftPwmValue);
       pixels.setPixelColor(1, pixels.Color(0, 0, 100)); //GRB
       alivecount=0;
@@ -108,12 +108,12 @@ void loop() {
           rightY = 127;
         }
       }
-      else if (distance<=range_close){
+      else if ((distance<=range_close)&&(signalStrength>150)&&(signalStrength<55000)){
         if (rightY<127){
           rightY = 127-((127-rightY)*.5);
         }
       }
-      int rightPwmValue = map(rightY, 0, 255, 45, 135); // Map joystick value to PWM range 180-0 full range
+      int rightPwmValue = map(rightY, 0, 255, 5, 175); // Map joystick value to PWM range 180-0 full range
       rightPWM.write(rightPwmValue);
       pixels.setPixelColor(0, pixels.Color(0, 0, 100)); //GRB using Blue to indicate controller input
       alivecount=0;
@@ -138,7 +138,7 @@ void loop() {
     pixels.setPixelColor(2, pixels.Color(0, 200, 0));  //green, red, blue
   }
   else if ((distance<=range_stop)&&((signalStrength<150)||(signalStrength>55000))){ //Too Close - Stop
-    pixels.setPixelColor(2, pixels.Color(100, 200, 100));  //green, red, blue
+    pixels.setPixelColor(2, pixels.Color(150, 50, 50));  //green, red, blue
   }
   else if (distance<=range_close){ //Caution slow down
     pixels.setPixelColor(2, pixels.Color(150, 150, 0));  //green, red, blue
