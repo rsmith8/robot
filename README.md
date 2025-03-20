@@ -5,13 +5,7 @@
     * Rationale: adequate guides and similar examples, relatively cheap, and are already on hand.
 * This code will be used with differential drive robots, that will share the same root code and much of its functionality, with special configurations being addressed as the time comes.
 
-## To Do:
- * fix Bluetooth connection https://raspberrypi.stackexchange.com/questions/122429/raspberry-pi-4-wont-pair-to-bluetooth-devices/123914#123914 or https://forums.raspberrypi.com/viewtopic.php?t=304000
- 	* Edit /usr/lib/systemd/system/bluetooth.service
-	* Add -d after ExecStart=/usr/libexec/bluetooth/bluetoothd
-	* Save.
-	* $ systemctl daemon-reload
-	* $ systemctl restart bluetooth
+## To Do:(Not in any order)
  * voice activation PicoVoice control of modes https://picovoice.ai/docs/quick-start/orca-python/
  * Serial exchange from Pi to Arduino heartbeats and watchdog  https://roboticsbackend.com/raspberry-pi-arduino-serial-communication/
  * Camera functionality tensor flow or https://www.raspberrypi.com/documentation/computers/camera_software.html#rpicam-apps
@@ -21,6 +15,14 @@
     3. OpenCV tracking or Open Bot
  * CAN motor control https://forums.raspberrypi.com/viewtopic.php?t=296117
  * ROS integration https://docs.ros.org/en/foxy/How-To-Guides/Installing-on-Raspberry-Pi.html
+ * Start script in terminal on startup - https://forums.raspberrypi.com/viewtopic.php?f=66&t=294014
+       * sudo nano /etc/xdg/lxsession/LXDE-pi/autostart
+          * @lxpanel --profile LXDE-pi
+          * @pcmanfm --desktop --profile LXDE-pi
+          * @xscreensaver -no-splash
+          * @lxterminal -e python3 /path/Pi.py - BROKE BLUETOOTH and did not open a terminal
+     * Alaternatively??? start script Pi.py sudo nano /etc/xdg/autostart/display.desktop https://www.makeuseof.com/how-to-run-a-raspberry-pi-program-script-at-startup/
+ * Bluetooth use rfcomm https://forums.raspberrypi.com/viewtopic.php?t=320455
 
 ## References: 
    * Pi safe shutdown button https://scribles.net/adding-power-switch-on-raspberry-pi/
@@ -43,6 +45,9 @@
       * sudo mount /dev/XXXX /media/mydrive
       * sudo umount /media/myflashdrive
    * Bluetoothctl issues fixed: https://raspberrypi.stackexchange.com/questions/122429/raspberry-pi-4-wont-pair-to-bluetooth-devices
+   * Fix Bluetooth from https://return2.net/fix-bluetooth-problems-on-raspberry-pi-running-raspbian/
+      * Reinstall Bluetooth packages: sudo apt purge bluez && sudo apt install bluez. 
+      * Reinstall pi-bluetooth: sudo apt purge pi-bluetooth && sudo apt install pi-bluetooth. 
    * Bluetooth use rfcomm https://forums.raspberrypi.com/viewtopic.php?t=320455
    * TF Luna sensor example https://www.waveshare.com/wiki/TF-Luna_LiDAR_Range_Sensor
 
@@ -65,22 +70,11 @@ raspi-info
     * git clone https://github.com/rsmith8/robot.git
     * setup Arduino https://magpi.raspberrypi.com/articles/program-arduino-uno-raspberry-pi
       * install library -> Adafruit NeoPixel      
-      * install nano firmware
+      * install 'Arduino-Nano.ino' firmware
     * sudo apt install python3-evdev
        * python -m evdev.evtest
-    * Start script in terminal on startup - https://forums.raspberrypi.com/viewtopic.php?f=66&t=294014
-       * sudo nano /etc/xdg/lxsession/LXDE-pi/autostart
-          * @lxpanel --profile LXDE-pi
-          * @pcmanfm --desktop --profile LXDE-pi
-          * @xscreensaver -no-splash
-          * @lxterminal -e python3 /path/Pi.py - BROKE BLUETOOTH and did not open a terminal
-             * Fox from https://return2.net/fix-bluetooth-problems-on-raspberry-pi-running-raspbian/
-             * Reinstall Bluetooth packages: sudo apt purge bluez && sudo apt install bluez. 
-             * Reinstall pi-bluetooth: sudo apt purge pi-bluetooth && sudo apt install pi-bluetooth. 
-
-    * start script Pi.py sudo nano /etc/xdg/autostart/display.desktop https://www.makeuseof.com/how-to-run-a-raspberry-pi-program-script-at-startup/
-
     * python3 -m pip config set global.break-system-packages true
     * pip3 install pvorca
-
- 5. ...
+ 5. Run from terminal
+   * cd robot
+   * python3 Pi.py
