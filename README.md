@@ -75,6 +75,7 @@ raspi-info
        * python -m evdev.evtest
     * python3 -m pip config set global.break-system-packages true
     * pip3 install pvorca
+    * Automate STARTUP....
  5. Run from terminal
    * cd robot
    * python3 Pi.py
