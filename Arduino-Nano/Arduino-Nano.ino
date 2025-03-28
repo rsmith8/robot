@@ -46,6 +46,8 @@ int oldl=127;
 int filtl=127;
 int oldr=127;
 int filtr=127;
+int leftY=127;
+int rightY=127;
 
 const int leftPwmPin = 14;  // PWM output for left joystick is 14 on yardbot - test board is 6
 const int rightPwmPin = 15; // PWM output for right joystick is 15 on yardbot - test board is 6
@@ -72,6 +74,7 @@ void loop() {
   Wire.endTransmission();                 //The I2C data transfer is complete
   Wire.requestFrom((uint8_t)deviceAddress, (uint8_t)7); //Read 7 bytes of data 
 
+ //Inputs&Dump_Out-----------------------------------------------------------------------
   if (Wire.available() == 7) { //ToF Sensor - 7 bytes of data are available
     byte data[7];
     for (int i = 0; i < 7; i++) {
@@ -80,41 +83,15 @@ void loop() {
     distance = (data[1] << 8) | data[0]; //Distance Value
     signalStrength = (data[3] << 8) | data[2]; //Signal Strength Signal Dist value is unreliable when Amp < 100 or Amp = 65535 (Overexposure) 
   }
-
   if (Serial.available()) {
     String input = Serial.readStringUntil('\n');
-        
     if (input.startsWith("L")) { //Left Joystick Input
-      int leftY = input.substring(1).toInt();
-      if ((distance<range_stop)&&(signalStrength>150)&&(signalStrength<55000)){
-        if (leftY<127){
-          leftY = 127;
-        }
-      }
-      else if ((distance<=range_close)&&(signalStrength>150)&&(signalStrength<55000)){
-        if (leftY<127){
-          leftY = 127-((127-leftY)*.5);
-        }
-      }
-      int leftPwmValue = map(leftY, 0, 255, 175, 5); // Map joystick value to PWM range 180-0 full range
-      leftPWM.write(leftPwmValue);
+      leftY = input.substring(1).toInt();
       pixels.setPixelColor(1, pixels.Color(0, 0, 100)); //GRB
       alivecount=0;
     } 
     else if (input.startsWith("R")) { //Right Joystick Input
-      int rightY = input.substring(1).toInt();
-      if ((distance<range_stop)&&(signalStrength>150)&&(signalStrength<55000)){
-        if (rightY<127){
-          rightY = 127;
-        }
-      }
-      else if ((distance<=range_close)&&(signalStrength>150)&&(signalStrength<55000)){
-        if (rightY<127){
-          rightY = 127-((127-rightY)*.5);
-        }
-      }
-      int rightPwmValue = map(rightY, 0, 255, 5, 175); // Map joystick value to PWM range 180-0 full range
-      rightPWM.write(rightPwmValue);
+      rightY = input.substring(1).toInt();
       pixels.setPixelColor(0, pixels.Color(0, 0, 100)); //GRB using Blue to indicate controller input
       alivecount=0;
     }
@@ -133,7 +110,42 @@ void loop() {
       alivecount=0;
     }
   }
-  
+ //Drive_Out-----------------------------------------------------------------------
+  //Stop
+  if ((distance<range_stop)&&(signalStrength>150)&&(signalStrength<55000)){
+    if (leftY<127){
+      filtl = 127;
+    }
+    if (rightY<127){
+      filtr = 127;
+    }
+  }
+  //Slow
+  else if ((distance<=range_close)&&(signalStrength>150)&&(signalStrength<55000)){
+    if (leftY<127){
+      filtl = 127-((127-leftY)*.5);
+    }
+    if (rightY<127){
+      filtr = 127-((127-rightY)*.5);
+    }
+  }
+  //Go filtered
+  else {
+    if ((leftY<127)&&(oldl<leftY)){
+      filtl = 127-((127-leftY)*((127-leftY)/(127-oldl)));
+      oldl=leftY;
+    }
+    if ((rightY<127)&&(oldr<rightY)){
+      filtr = 127-((127-rightY)*((127-rightY)/(127-oldr)));
+      oldr=rightY;
+    }
+  }
+  //Write drive out
+    int leftPwmValue = map(filtl, 0, 255, 175, 5); // Map joystick value to PWM range 180-0 full range
+    leftPWM.write(leftPwmValue);
+    int rightPwmValue = map(filtl, 0, 255, 5, 175); // Map joystick value to PWM range 180-0 full range
+    rightPWM.write(rightPwmValue);
+  //lights
   if ((distance<=range_stop)&&(signalStrength>150)&&(signalStrength<55000)){ //Too Close - Stop
     pixels.setPixelColor(2, pixels.Color(0, 200, 0));  //green, red, blue
   }
@@ -158,7 +170,6 @@ void loop() {
     pixels.show();   // Send the updated pixel colors to the hardware.
     counter=0;
   }    
-
   counter++;
   alivecount++;
 }
