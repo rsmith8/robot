@@ -42,10 +42,6 @@ int counter=0;            // counts connected arduino and stadia devices
 int alivecount=0;
 int range_stop=20;
 int range_close=100;
-int oldl=127;
-int filtl=127;
-int oldr=127;
-int filtr=127;
 
 const int leftPwmPin = 14;  // PWM output for left joystick is 14 on yardbot - test board is 6
 const int rightPwmPin = 15; // PWM output for right joystick is 15 on yardbot - test board is 6
