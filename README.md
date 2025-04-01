@@ -50,7 +50,7 @@
       * Reinstall pi-bluetooth: sudo apt purge pi-bluetooth && sudo apt install pi-bluetooth. 
    * Bluetooth use rfcomm https://forums.raspberrypi.com/viewtopic.php?t=320455
    * TF Luna sensor example https://www.waveshare.com/wiki/TF-Luna_LiDAR_Range_Sensor
-
+   * Run code on startup https://learn.sparkfun.com/tutorials/how-to-run-a-raspberry-pi-program-on-startup/method-2-autostart
    https://forums.raspberrypi.com/viewtopic.php?p=2292242&hilit=Bluetooth#p2292242
 raspi-info
 
