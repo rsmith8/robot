@@ -29,7 +29,7 @@
    * Setup Arduino on Pi (scroll down to ARM) https://magpi.raspberrypi.com/articles/program-arduino-uno-raspberry-pi
    * Setup Github on Pi (Remember SSH no longer works) https://www.theserverside.com/blog/Coffee-Talk-Java-News-Stories-and-Opinions/Fix-GitHubs-support-for-password-authentication-was-removed-error
       1. cd robot
-	   2. git pull
+	   2. git pull (without login: git clone https://github.com/rsmith8/robot.git)
 	   3. git add --all #or file name eg. README.md
      	4. git commit -am "Notes..."
      	5. git push
