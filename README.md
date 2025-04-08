@@ -74,12 +74,13 @@ raspi-info
     * sudo apt install python3-evdev
        * python -m evdev.evtest
     * Configure service to start Pi.py
-       * sudo nano /lib/systemd/system/robot.service (Paste from files)
+       * sudo cp robot/robot.service /lib/systemd/system/
        * sudo systemctl daemon-reload
-       * sudo systemctl enable clock.service
+       * sudo systemctl enable robot.service
     * python3 -m pip config set global.break-system-packages true
     * pip3 install pvorca
     * Automate STARTUP....
  5. Run from terminal
    * cd robot
    * python3 Pi.py
+
