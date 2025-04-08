@@ -1,0 +1,14 @@
+[Unit]
+Description=Start Clock
+
+[Service]
+Environment=DISPLAY=:0
+Environment=XAUTHORITY=/home/rs/.Xauthority
+ExecStart=/bin/bash -c '/usr/bin/python3 /home/rs/robot/Pi.py > /home/rs/robot.>
+Restart=always
+RestartSec=10s
+KillMode=process
+TimeoutSec=infinity
+
+[Install]
+WantedBy=graphical.target
