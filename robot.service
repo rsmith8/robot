@@ -4,7 +4,7 @@ Description=Start Clock
 [Service]
 Environment=DISPLAY=:0
 Environment=XAUTHORITY=/home/rs/.Xauthority
-ExecStart=/bin/bash -c '/usr/bin/python3 /home/rs/robot/Pi.py > /home/rs/robot.>
+ExecStart=/bin/bash -c '/usr/bin/python3 /home/rs/robot/Pi.py > /home/rs/robot.log 2>&1'
 Restart=always
 RestartSec=10s
 KillMode=process
