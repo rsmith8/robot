@@ -73,6 +73,10 @@ raspi-info
       * install 'Arduino-Nano.ino' firmware
     * sudo apt install python3-evdev
        * python -m evdev.evtest
+    * Configure service to start Pi.py
+       * sudo nano /lib/systemd/system/robot.service (Paste from files)
+       * sudo systemctl daemon-reload
+       * sudo systemctl enable clock.service
     * python3 -m pip config set global.break-system-packages true
     * pip3 install pvorca
     * Automate STARTUP....
